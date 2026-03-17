@@ -1,4 +1,3 @@
-using System;
 using SyncSample.Common;
 using UnityEngine;
 
@@ -10,6 +9,7 @@ namespace SyncSample.Client
     public class GameClientExample : MonoBehaviour
     {
         [SerializeField] private TcpGameClient client;
+        [SerializeField] private string playerName = "Player";
         [SerializeField] private float pingInterval = 2f;
         private float _nextPing;
 
@@ -32,7 +32,9 @@ namespace SyncSample.Client
 
         private void OnConnected()
         {
-            Logger.Log("已连接，可发送 Echo/Chat");
+            var join = new JoinMessage(string.IsNullOrEmpty(playerName) ? "Guest" : playerName.Trim());
+            client.Send(MessageType.Join, JsonUtility.ToJson(join));
+            Logger.Log("已连接，已发送名字: " + join.name);
         }
 
         private void OnDisconnected()
@@ -62,6 +64,27 @@ namespace SyncSample.Client
                     {
                         var chat = JsonUtility.FromJson<ChatMessage>(envelope.payload);
                         Logger.Log($"聊天 [{chat.sender}]: {chat.text}");
+                    }
+                    catch { }
+                    break;
+                case MessageType.ClientList:
+                    try
+                    {
+                        var list = JsonUtility.FromJson<ClientListMessage>(envelope.payload);
+                        if (list.clients != null)
+                        {
+                            Logger.Log($"当前在线 {list.clients.Length} 人");
+                            for (int i = 0; i < list.clients.Length; i++)
+                                Logger.Log($"  - [{list.clients[i].id}] {list.clients[i].name}");
+                        }
+                    }
+                    catch { }
+                    break;
+                case MessageType.ClientJoined:
+                    try
+                    {
+                        var info = JsonUtility.FromJson<ClientInfo>(envelope.payload);
+                        Logger.Log($"新玩家加入: [{info.id}] {info.name}");
                     }
                     catch { }
                     break;

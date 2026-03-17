@@ -97,5 +97,29 @@ namespace SyncSample.Server
                     c.Send(packet);
             }
         }
+
+        /// <summary> 向除 exclude 以外的所有已连接客户端发送一条消息 </summary>
+        public void BroadcastExcept(ClientSession exclude, string type, string payloadJson)
+        {
+            if (exclude == null) { Broadcast(type, payloadJson); return; }
+            byte[] packet = ProtocolHelper.Encode(type, payloadJson);
+            lock (_clientsLock)
+            {
+                foreach (var c in _clients)
+                {
+                    if (c == exclude) continue;
+                    c.Send(packet);
+                }
+            }
+        }
+
+        /// <summary> 获取当前所有会话的快照（Id + Name），用于组 ClientList 回复。 </summary>
+        public ClientSession[] GetSessionsSnapshot()
+        {
+            lock (_clientsLock)
+            {
+                return _clients.ToArray();
+            }
+        }
     }
 }

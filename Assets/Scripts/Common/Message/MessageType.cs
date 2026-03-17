@@ -10,5 +10,12 @@ namespace SyncSample.Common
         public const string Echo = "echo";
         public const string Chat = "chat";
         public const string Error = "error";
+
+        /// <summary> 连接协议：客户端发送自己的名字 </summary>
+        public const string Join = "join";
+        /// <summary> 服务器回复：当前所有已连接客户端信息 </summary>
+        public const string ClientList = "client_list";
+        /// <summary> 服务器广播：有新客户端加入，payload 为单条 ClientInfo </summary>
+        public const string ClientJoined = "client_joined";
     }
 }

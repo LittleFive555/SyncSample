@@ -22,6 +22,8 @@ namespace SyncSample.Server
         private volatile bool _closed;
 
         public string Id { get; }
+        /// <summary> 客户端在 Join 时上报的名字，未 Join 前为空。 </summary>
+        public string Name { get; set; }
         public TcpClient TcpClient => _client;
 
         public ClientSession(TcpClient client, TcpGameServer server)

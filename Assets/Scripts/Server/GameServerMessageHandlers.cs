@@ -15,6 +15,9 @@ namespace SyncSample.Server
 
             switch (envelope.type)
             {
+                case MessageType.Join:
+                    HandleJoin(server, session, envelope.payload);
+                    break;
                 case MessageType.Ping:
                     HandlePing(session, envelope.payload);
                     break;
@@ -27,6 +30,33 @@ namespace SyncSample.Server
                 default:
                     Logger.Log($"未知消息类型: {envelope.type}");
                     break;
+            }
+        }
+
+        private static void HandleJoin(TcpGameServer server, ClientSession session, string payload)
+        {
+            try
+            {
+                var join = JsonUtility.FromJson<JoinMessage>(payload);
+                string name = string.IsNullOrEmpty(join.name) ? "Guest" : join.name.Trim();
+                session.Name = name;
+                Logger.Log($"客户端加入: Id={session.Id}, Name={name}");
+
+                var sessions = server.GetSessionsSnapshot();
+                var clients = new ClientInfo[sessions.Length];
+                for (int i = 0; i < sessions.Length; i++)
+                    clients[i] = new ClientInfo(sessions[i].Id, sessions[i].Name ?? string.Empty);
+
+                var listPayload = JsonUtility.ToJson(new ClientListMessage(clients));
+                session.Send(MessageType.ClientList, listPayload);
+
+                var newClientInfo = new ClientInfo(session.Id, session.Name);
+                string joinedPayload = JsonUtility.ToJson(newClientInfo);
+                server.BroadcastExcept(session, MessageType.ClientJoined, joinedPayload);
+            }
+            catch (Exception e)
+            {
+                Logger.LogWarning("Join 解析失败: " + e.Message);
             }
         }
 
