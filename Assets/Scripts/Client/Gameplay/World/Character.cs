@@ -1,3 +1,4 @@
+using SyncSample.Client.UI;
 using SyncSample.Common;
 using UnityEngine;
 
@@ -10,6 +11,9 @@ namespace SyncSample.Client.Gameplay
     {
         [SerializeField] private Transform displayRoot;
         [SerializeField] private float moveSpeed = 3f;
+
+        public string Id { get; private set; }
+        public string Name { get; private set; }
 
         private FixedPoint _logicX;
         private FixedPoint _logicY;
@@ -24,6 +28,14 @@ namespace SyncSample.Client.Gameplay
             if (displayRoot == null)
                 displayRoot = transform;
             SyncLogicFromDisplay();
+        }
+
+        public void Init(string id, string name, float x, float y)
+        {
+            Id = id;
+            Name = name;
+            SetLogicPosition(x, y);
+            UIInfo.Instance.SetPos(this);
         }
 
         /// <summary> 应用位移：先以定点数加到逻辑，再同步到显示（显示用浮点）。 </summary>

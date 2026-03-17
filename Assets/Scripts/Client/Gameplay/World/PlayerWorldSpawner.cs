@@ -84,7 +84,7 @@ namespace SyncSample.Client.Gameplay
                     try
                     {
                         var input = JsonUtility.FromJson<PlayerInputMessage>(envelope.payload);
-                        Logger.Log("PlayerWorldSpawner PlayerInput: " + input.frame + " " + input.clientId + " " + input.dx.raw + " " + input.dy.raw);
+                        // Logger.Log("PlayerWorldSpawner PlayerInput: " + input.frame + " " + input.clientId + " " + input.dx.raw + " " + input.dy.raw);
                         if (!string.IsNullOrEmpty(input.clientId))
                             PlayerInputSync.AddPending(input.frame, input.clientId, input.dx, input.dy);
                     }
@@ -123,7 +123,7 @@ namespace SyncSample.Client.Gameplay
             go.transform.localScale = Vector3.one;
 
             var character = go.AddComponent<Character>();
-            character.SetLogicPosition(startX, 0f);
+            character.Init(id, displayName, startX, 0f);
 
             var renderer = go.GetComponent<Renderer>();
             if (renderer != null)

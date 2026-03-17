@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SyncSample.Client
+namespace SyncSample.Client.UI
 {
     public class UIStart : MonoBehaviour
     {
