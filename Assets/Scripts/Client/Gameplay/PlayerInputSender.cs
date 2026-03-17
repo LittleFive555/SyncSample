@@ -4,15 +4,15 @@ using UnityEngine;
 namespace SyncSample.Client.Gameplay
 {
     /// <summary>
-    /// 采集上下左右输入，按帧发给服务器；位移在收到服务器广播后于 WorldManager.WaitForAllClientsThisFrame 中生效。
+    /// 采集上下左右输入，在 WorldManager 推进逻辑帧之后由 Dispatcher 驱动，每逻辑帧仅发送一次（含空操作）。
     /// </summary>
     public class PlayerInputSender : MonoBehaviour
     {
         [SerializeField] private TcpGameClient client;
-        [SerializeField] private float moveSpeed = 3f;
 
         private float _dx;
         private float _dy;
+        private long _lastSentFrame = -1;
 
         private void Awake()
         {
@@ -21,11 +21,8 @@ namespace SyncSample.Client.Gameplay
 
         private void Update()
         {
-            float h = Input.GetAxisRaw("Horizontal");
-            float v = Input.GetAxisRaw("Vertical");
-            float dt = Time.deltaTime > 0f ? Time.deltaTime : 0.02f;
-            _dx += h * moveSpeed * dt;
-            _dy += v * moveSpeed * dt;
+            _dx = Input.GetAxisRaw("Horizontal");
+            _dy = Input.GetAxisRaw("Vertical");
         }
 
         private void FixedUpdate()
@@ -33,11 +30,14 @@ namespace SyncSample.Client.Gameplay
             if (client == null || !client.IsConnected) return;
             if (!PlayerInputSync.AllClientsConnected()) return;
 
-            long frame = GameMain.Instance != null ? GameMain.Instance.CurrentFrame + 1 : 0;
+            long currentFrame = WorldManager.Instance.CurrentFrame;
+            if (currentFrame <= _lastSentFrame)
+                return;
+
+            _lastSentFrame = currentFrame;
+            long frame = currentFrame + 1;
             var msg = new PlayerInputMessage(frame, FixedPoint.FromFloat(_dx), FixedPoint.FromFloat(_dy));
             client.Send(MessageType.PlayerInput, JsonUtility.ToJson(msg));
-            _dx = 0f;
-            _dy = 0f;
         }
     }
 }

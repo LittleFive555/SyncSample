@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using SyncSample.Client;
 
 namespace SyncSample.Client.Gameplay
 {
@@ -21,21 +20,13 @@ namespace SyncSample.Client.Gameplay
         }
 
         /// <summary> 客户端 Update 调度器，各模块注册 IUpdatable/IFixedUpdatable/ILateUpdatable 后由本类统一驱动并做异常隔离。 </summary>
-        public static UpdateDispatcher Dispatcher { get; private set; }
-
-        private WorldManager _worldManager;
+        public static UpdateDispatcher Updater { get; } = new UpdateDispatcher();
 
         /// <summary> 当前世界帧号，供输入等模块发送本帧/下一帧用。 </summary>
-        public long CurrentFrame => _worldManager.CurrentFrame;
+        public long CurrentFrame => WorldManager.Instance.CurrentFrame;
 
         public void Initialize()
         {
-            if (Dispatcher == null)
-                Dispatcher = new UpdateDispatcher();
-
-            _worldManager = new WorldManager();
-            if (Dispatcher != null)
-                Dispatcher.Register(_worldManager);
             Logger.Log("GameMain Initialize");
         }
 
@@ -43,7 +34,7 @@ namespace SyncSample.Client.Gameplay
         {
             try
             {
-                Dispatcher?.DispatchUpdate(Time.deltaTime);
+                Updater?.DispatchUpdate(Time.deltaTime);
             }
             catch (Exception ex)
             {
@@ -55,7 +46,7 @@ namespace SyncSample.Client.Gameplay
         {
             try
             {
-                Dispatcher?.DispatchFixedUpdate(Time.fixedDeltaTime);
+                Updater?.DispatchFixedUpdate(Time.fixedDeltaTime);
             }
             catch (Exception ex)
             {
@@ -67,7 +58,7 @@ namespace SyncSample.Client.Gameplay
         {
             try
             {
-                Dispatcher?.DispatchLateUpdate(Time.deltaTime);
+                Updater?.DispatchLateUpdate(Time.deltaTime);
             }
             catch (Exception ex)
             {

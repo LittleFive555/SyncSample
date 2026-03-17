@@ -9,6 +9,7 @@ namespace SyncSample.Client.Gameplay
     public class Character : MonoBehaviour
     {
         [SerializeField] private Transform displayRoot;
+        [SerializeField] private float moveSpeed = 3f;
 
         private FixedPoint _logicX;
         private FixedPoint _logicY;
@@ -28,8 +29,8 @@ namespace SyncSample.Client.Gameplay
         /// <summary> 应用位移：先以定点数加到逻辑，再同步到显示（显示用浮点）。 </summary>
         public void ApplyMovement(float dx, float dy)
         {
-            _logicX = FixedPoint.FromFloat(_logicX.ToFloat() + dx);
-            _logicY = FixedPoint.FromFloat(_logicY.ToFloat() + dy);
+            _logicX = FixedPoint.FromFloat(_logicX.ToFloat() + dx * moveSpeed * Time.fixedDeltaTime);
+            _logicY = FixedPoint.FromFloat(_logicY.ToFloat() + dy * moveSpeed * Time.fixedDeltaTime);
             SyncDisplayFromLogic();
         }
 

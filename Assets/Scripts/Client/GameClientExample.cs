@@ -14,11 +14,23 @@ namespace SyncSample.Client
         [SerializeField] private float pingInterval = 2f;
         private float _nextPing;
 
+        [RuntimeInitializeOnLoadMethod]
+        public static void Launch()
+        {
+            Logger.Log("Before Launch");
+            // 初始化单例
+            GameMain.Instance.Initialize();
+            WorldManager.Instance.Initialize();
+
+            // 注册调度器
+            GameMain.Updater.Register(WorldManager.Instance);
+            Logger.Log("After Launch");
+        }
+
         private void Awake()
         {
             if (client == null) client = GetComponent<TcpGameClient>();
             if (client == null) return;
-            GameMain.Instance.Initialize();
             client.OnConnected += OnConnected;
             client.OnDisconnected += OnDisconnected;
             client.OnMessageReceived += OnMessageReceived;
