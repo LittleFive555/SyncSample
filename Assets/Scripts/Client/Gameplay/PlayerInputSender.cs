@@ -32,7 +32,6 @@ namespace SyncSample.Client.Gameplay
         {
             if (client == null || !client.IsConnected) return;
             if (!PlayerInputSync.AllClientsConnected()) return;
-            if (_dx == 0f && _dy == 0f) return;
 
             long frame = GameMain.Instance != null ? GameMain.Instance.CurrentFrame + 1 : 0;
             var msg = new PlayerInputMessage(frame, FixedPoint.FromFloat(_dx), FixedPoint.FromFloat(_dy));
