@@ -47,8 +47,9 @@ namespace SyncSample.Server
                 for (int i = 0; i < sessions.Length; i++)
                     clients[i] = new ClientInfo(sessions[i].Id, sessions[i].Name ?? string.Empty);
 
-                var listPayload = JsonUtility.ToJson(new ClientListMessage(clients));
-                session.Send(MessageType.ClientList, listPayload);
+                var listMsg = new ClientListMessage(clients);
+                listMsg.selfId = session.Id;
+                session.Send(MessageType.ClientList, JsonUtility.ToJson(listMsg));
 
                 var newClientInfo = new ClientInfo(session.Id, session.Name);
                 string joinedPayload = JsonUtility.ToJson(newClientInfo);

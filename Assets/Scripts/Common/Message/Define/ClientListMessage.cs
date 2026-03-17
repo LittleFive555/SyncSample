@@ -9,6 +9,8 @@ namespace SyncSample.Common
     public class ClientListMessage
     {
         public ClientInfo[] clients;
+        /// <summary> 当前连接对应的客户端 Id，用于客户端识别“自己”。 </summary>
+        public string selfId;
 
         public ClientListMessage() { }
 
