@@ -16,13 +16,14 @@ namespace SyncSample.Client.Gameplay
         public void OnFixedUpdate(float fixedDeltaTime)
         {
             FixedDeltaTime = fixedDeltaTime;
+            if (!PlayerInputSync.HasAllInputsForFrame(_currentFrame))
+                return;
             WaitForAllClientsThisFrame();
             AdvanceFrame();
         }
 
         /// <summary>
-        /// 等待本帧所有客户端输入就绪后，应用收到的玩家输入（位移等），再推进帧。
-        /// 操作先发服务器，收到广播后在此处生效。
+        /// 本帧已收齐所有客户端输入（lockstep）：应用玩家输入后推进帧。
         /// </summary>
         protected virtual void WaitForAllClientsThisFrame()
         {

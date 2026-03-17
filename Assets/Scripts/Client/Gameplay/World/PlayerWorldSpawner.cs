@@ -15,6 +15,7 @@ namespace SyncSample.Client.Gameplay
         [SerializeField] private Color localPlayerColor = new Color(0.2f, 0.6f, 1f);
         [SerializeField] private Color remotePlayerColor = new Color(0.6f, 0.6f, 0.6f);
         [SerializeField] private float spawnSpacing = 2f;
+        [SerializeField] private int expectedClientCount = 2;
 
         private Transform _playersRoot;
         private readonly Dictionary<string, GameObject> _playerObjects = new Dictionary<string, GameObject>();
@@ -30,6 +31,7 @@ namespace SyncSample.Client.Gameplay
             client.OnMessageReceived += OnMessageReceived;
             client.OnDisconnected += OnDisconnected;
             PlayerInputSync.SetMover(MovePlayer);
+            PlayerInputSync.SetExpectedClientCount(expectedClientCount);
         }
 
         private void OnDestroy()
@@ -52,8 +54,13 @@ namespace SyncSample.Client.Gameplay
                         _selfId = list.selfId ?? string.Empty;
                         if (list.clients != null)
                         {
+                            var ids = new List<string>(list.clients.Length);
                             foreach (var c in list.clients)
+                            {
                                 EnsurePlayer(c.id, c.name, c.id == _selfId);
+                                if (!string.IsNullOrEmpty(c.id)) ids.Add(c.id);
+                            }
+                            PlayerInputSync.SetExpectedClients(ids);
                         }
                     }
                     catch (System.Exception e)
@@ -66,6 +73,7 @@ namespace SyncSample.Client.Gameplay
                     {
                         var info = JsonUtility.FromJson<ClientInfo>(envelope.payload);
                         EnsurePlayer(info.id, info.name, false);
+                        PlayerInputSync.AddExpectedClient(info.id);
                     }
                     catch (System.Exception e)
                     {
