@@ -29,10 +29,12 @@ namespace SyncSample.Client.Gameplay
             _playersRoot = root.transform;
             client.OnMessageReceived += OnMessageReceived;
             client.OnDisconnected += OnDisconnected;
+            PlayerInputSync.SetMover(MovePlayer);
         }
 
         private void OnDestroy()
         {
+            PlayerInputSync.SetMover(null);
             if (client == null) return;
             client.OnMessageReceived -= OnMessageReceived;
             client.OnDisconnected -= OnDisconnected;
@@ -70,6 +72,18 @@ namespace SyncSample.Client.Gameplay
                         Logger.LogWarning("PlayerWorldSpawner ClientJoined 解析失败: " + e.Message);
                     }
                     break;
+                case MessageType.PlayerInput:
+                    try
+                    {
+                        var input = JsonUtility.FromJson<PlayerInputMessage>(envelope.payload);
+                        if (!string.IsNullOrEmpty(input.clientId))
+                            PlayerInputSync.AddPending(input.frame, input.clientId, input.dx, input.dy);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Logger.LogWarning("PlayerWorldSpawner PlayerInput 解析失败: " + e.Message);
+                    }
+                    break;
             }
         }
 
@@ -94,9 +108,13 @@ namespace SyncSample.Client.Gameplay
             go.transform.SetParent(_playersRoot);
 
             int index = _playerObjects.Count;
-            go.transform.localPosition = new Vector3(index * spawnSpacing, 0f, 0f);
+            float startX = index * spawnSpacing;
+            go.transform.localPosition = new Vector3(startX, 0f, 0f);
             go.transform.localRotation = Quaternion.identity;
             go.transform.localScale = Vector3.one;
+
+            var character = go.AddComponent<Character>();
+            character.SetLogicPosition(startX, 0f);
 
             var renderer = go.GetComponent<Renderer>();
             if (renderer != null)
@@ -107,6 +125,17 @@ namespace SyncSample.Client.Gameplay
             }
 
             _playerObjects[id] = go;
+        }
+
+        /// <summary> 应用服务器下发的位移，在 WaitForAllClientsThisFrame 中被调用：先应用到逻辑，再同步到显示。 </summary>
+        public void MovePlayer(string clientId, float dx, float dy)
+        {
+            GameObject go;
+            if (string.IsNullOrEmpty(clientId) || !_playerObjects.TryGetValue(clientId, out go) || go == null)
+                return;
+            var character = go.GetComponent<Character>();
+            if (character != null)
+                character.ApplyMovement(dx, dy);
         }
     }
 }

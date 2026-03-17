@@ -16,11 +16,17 @@ namespace SyncSample.Client.Gameplay
         public void OnFixedUpdate(float fixedDeltaTime)
         {
             FixedDeltaTime = fixedDeltaTime;
-
-            // 将来：等待所有其他客户端本帧输入/状态就绪后再执行下方逻辑
-            // WaitForAllClientsThisFrame();
-
+            WaitForAllClientsThisFrame();
             AdvanceFrame();
+        }
+
+        /// <summary>
+        /// 等待本帧所有客户端输入就绪后，应用收到的玩家输入（位移等），再推进帧。
+        /// 操作先发服务器，收到广播后在此处生效。
+        /// </summary>
+        protected virtual void WaitForAllClientsThisFrame()
+        {
+            PlayerInputSync.ApplyFrame(_currentFrame);
         }
 
         /// <summary> 推进一帧。子类可重写以在推进前/后插入逻辑。 </summary>

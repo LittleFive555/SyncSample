@@ -27,6 +27,9 @@ namespace SyncSample.Server
                 case MessageType.Chat:
                     HandleChat(server, session, envelope.payload);
                     break;
+                case MessageType.PlayerInput:
+                    HandlePlayerInput(server, session, envelope.payload);
+                    break;
                 default:
                     Logger.Log($"未知消息类型: {envelope.type}");
                     break;
@@ -91,6 +94,20 @@ namespace SyncSample.Server
             catch (Exception e)
             {
                 Logger.LogWarning("Chat 解析失败: " + e.Message);
+            }
+        }
+
+        private static void HandlePlayerInput(TcpGameServer server, ClientSession session, string payload)
+        {
+            try
+            {
+                var input = JsonUtility.FromJson<PlayerInputMessage>(payload);
+                input.clientId = session.Id;
+                server.Broadcast(MessageType.PlayerInput, JsonUtility.ToJson(input));
+            }
+            catch (Exception e)
+            {
+                Logger.LogWarning("PlayerInput 解析失败: " + e.Message);
             }
         }
     }
