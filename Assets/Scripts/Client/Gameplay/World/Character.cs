@@ -35,7 +35,12 @@ namespace SyncSample.Client.Gameplay
             Id = id;
             Name = name;
             SetLogicPosition(x, y);
-            UIInfo.Instance.SetPos(this);
+            UIInfo.Instance.RegisterPos(this);
+        }
+
+        private void OnDestroy()
+        {
+            UIInfo.Instance.UnregisterPos(this);
         }
 
         /// <summary> 应用位移：先以定点数加到逻辑，再同步到显示（显示用浮点）。 </summary>

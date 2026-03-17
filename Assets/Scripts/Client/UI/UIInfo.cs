@@ -32,13 +32,22 @@ namespace SyncSample.Client.UI
             _delay.text = $"Delay: {delay}ms";
         }
 
-        public void SetPos(Character character)
+        public void RegisterPos(Character character)
         {
             if (!_posMap.TryGetValue(character, out var pos))
             {
                 pos = Instantiate(_posTemplate, _posRoot);
                 pos.gameObject.SetActive(true);
                 _posMap[character] = pos;
+            }
+        }
+
+        public void UnregisterPos(Character character)
+        {
+            if (_posMap.TryGetValue(character, out var pos))
+            {
+                Destroy(pos.gameObject);
+                _posMap.Remove(character);
             }
         }
     }
