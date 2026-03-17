@@ -26,20 +26,17 @@ namespace SyncSample.Client.Gameplay
         private WorldManager _worldManager;
 
         /// <summary> 当前世界帧号，供输入等模块发送本帧/下一帧用。 </summary>
-        public long CurrentFrame => _worldManager != null ? _worldManager.CurrentFrame : 0;
+        public long CurrentFrame => _worldManager.CurrentFrame;
 
-        private void Awake()
+        public void Initialize()
         {
             if (Dispatcher == null)
                 Dispatcher = new UpdateDispatcher();
-        }
 
-        private void Start()
-        {
-            Logger.Log("GameMain Start");
             _worldManager = new WorldManager();
             if (Dispatcher != null)
                 Dispatcher.Register(_worldManager);
+            Logger.Log("GameMain Initialize");
         }
 
         private void Update()

@@ -84,6 +84,7 @@ namespace SyncSample.Client.Gameplay
                     try
                     {
                         var input = JsonUtility.FromJson<PlayerInputMessage>(envelope.payload);
+                        Logger.Log("PlayerWorldSpawner PlayerInput: " + input.frame + " " + input.clientId + " " + input.dx.raw + " " + input.dy.raw);
                         if (!string.IsNullOrEmpty(input.clientId))
                             PlayerInputSync.AddPending(input.frame, input.clientId, input.dx, input.dy);
                     }

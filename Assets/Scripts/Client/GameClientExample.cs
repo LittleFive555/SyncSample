@@ -1,3 +1,4 @@
+using SyncSample.Client.Gameplay;
 using SyncSample.Common;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace SyncSample.Client
         {
             if (client == null) client = GetComponent<TcpGameClient>();
             if (client == null) return;
+            GameMain.Instance.Initialize();
             client.OnConnected += OnConnected;
             client.OnDisconnected += OnDisconnected;
             client.OnMessageReceived += OnMessageReceived;
@@ -47,26 +49,26 @@ namespace SyncSample.Client
             if (string.IsNullOrEmpty(envelope?.type)) return;
             switch (envelope.type)
             {
-                case MessageType.Pong:
-                    try
-                    {
-                        var pong = JsonUtility.FromJson<PongMessage>(envelope.payload);
-                        long rtt = TimeUtil.UtcNowMillis() - pong.timestamp;
-                        Logger.Log($"Pong 延迟约 {rtt} ms");
-                    }
-                    catch { }
-                    break;
-                case MessageType.Echo:
-                    Logger.Log("Echo: " + envelope.payload);
-                    break;
-                case MessageType.Chat:
-                    try
-                    {
-                        var chat = JsonUtility.FromJson<ChatMessage>(envelope.payload);
-                        Logger.Log($"聊天 [{chat.sender}]: {chat.text}");
-                    }
-                    catch { }
-                    break;
+                // case MessageType.Pong:
+                //     try
+                //     {
+                //         var pong = JsonUtility.FromJson<PongMessage>(envelope.payload);
+                //         long rtt = TimeUtil.UtcNowMillis() - pong.timestamp;
+                //         Logger.Log($"Pong 延迟约 {rtt} ms");
+                //     }
+                //     catch { }
+                //     break;
+                // case MessageType.Echo:
+                //     Logger.Log("Echo: " + envelope.payload);
+                //     break;
+                // case MessageType.Chat:
+                //     try
+                //     {
+                //         var chat = JsonUtility.FromJson<ChatMessage>(envelope.payload);
+                //         Logger.Log($"聊天 [{chat.sender}]: {chat.text}");
+                //     }
+                //     catch { }
+                //     break;
                 case MessageType.ClientList:
                     try
                     {
@@ -94,12 +96,12 @@ namespace SyncSample.Client
         private void Update()
         {
             if (client == null || !client.IsConnected) return;
-            if (Time.time >= _nextPing)
-            {
-                _nextPing = Time.time + pingInterval;
-                var ping = new PingMessage(TimeUtil.UtcNowMillis());
-                client.Send(MessageType.Ping, JsonUtility.ToJson(ping));
-            }
+            // if (Time.time >= _nextPing)
+            // {
+            //     _nextPing = Time.time + pingInterval;
+            //     var ping = new PingMessage(TimeUtil.UtcNowMillis());
+            //     client.Send(MessageType.Ping, JsonUtility.ToJson(ping));
+            // }
         }
 
         /// <summary> 发送 Echo（可由 UI 按钮调用） </summary>

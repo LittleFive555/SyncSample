@@ -16,7 +16,7 @@ namespace SyncSample.Client.Gameplay
         public void OnFixedUpdate(float fixedDeltaTime)
         {
             FixedDeltaTime = fixedDeltaTime;
-            if (!PlayerInputSync.HasAllInputsForFrame(_currentFrame))
+            if (!PlayerInputSync.HasAllInputsForFrame(_currentFrame + 1))
                 return;
             WaitForAllClientsThisFrame();
             AdvanceFrame();
