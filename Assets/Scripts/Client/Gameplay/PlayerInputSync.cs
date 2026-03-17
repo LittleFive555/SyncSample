@@ -15,6 +15,11 @@ namespace SyncSample.Client.Gameplay
         private static int _expectedClientCount;
         private static Action<string, float, float> _mover;
 
+        public static bool AllClientsConnected()
+        {
+            return ExpectedClientIds.Count == _expectedClientCount;
+        }
+
         /// <summary> dx, dy 为协议中的定点数，应用时再转为浮点。 </summary>
         public static void AddPending(long frame, string clientId, FixedPoint dx, FixedPoint dy)
         {

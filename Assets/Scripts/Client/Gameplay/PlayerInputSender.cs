@@ -31,6 +31,7 @@ namespace SyncSample.Client.Gameplay
         private void FixedUpdate()
         {
             if (client == null || !client.IsConnected) return;
+            if (!PlayerInputSync.AllClientsConnected()) return;
             if (_dx == 0f && _dy == 0f) return;
 
             long frame = GameMain.Instance != null ? GameMain.Instance.CurrentFrame + 1 : 0;
