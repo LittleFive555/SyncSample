@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using SyncSample.Common;
 using UnityEngine;
 
@@ -37,7 +38,17 @@ namespace SyncSample.Client.Gameplay
             _lastSentFrame = currentFrame;
             long frame = currentFrame + 1;
             var msg = new PlayerInputMessage(frame, FixedPoint.FromFloat(_dx), FixedPoint.FromFloat(_dy));
-            client.Send(MessageType.PlayerInput, JsonUtility.ToJson(msg));
+            if (GlobalSwitch.Instance.AddSendDelay > 0)
+            {
+                Task.Run(async () => {
+                    await Task.Delay(GlobalSwitch.Instance.AddSendDelay);
+                    client.Send(MessageType.PlayerInput, JsonUtility.ToJson(msg));
+                });
+            }
+            else
+            {
+                client.Send(MessageType.PlayerInput, JsonUtility.ToJson(msg));
+            }
         }
     }
 }

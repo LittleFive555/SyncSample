@@ -23,6 +23,7 @@ namespace SyncSample.Client.Gameplay
 
         private float _accumulatedTime;
         private bool _isWaitingForAllClients;
+        public bool IsBlockedForSyncing => _isWaitingForAllClients;
 
         public float LogicFixedDeltaTime { get; set; } = 0.03333333f;
 
@@ -38,7 +39,7 @@ namespace SyncSample.Client.Gameplay
             if (!_isWaitingForAllClients) // 如果在等待所有客户端输入，则不累积时间
                 _accumulatedTime += deltaTime;
 
-            while (_accumulatedTime >= LogicFixedDeltaTime) // 如果累积时间大于逻辑固定时间步，则推进一帧
+            while (_accumulatedTime >= LogicFixedDeltaTime + GlobalSwitch.Instance.AddReceiveDelay / 1000f) // 如果累积时间大于逻辑固定时间步，则推进一帧
             {
                 if (!PlayerInputSync.HasAllInputsForFrame(_currentFrame + 1))
                 {
@@ -46,7 +47,7 @@ namespace SyncSample.Client.Gameplay
                     return;
                 }
                 _isWaitingForAllClients = false;
-                _accumulatedTime -= LogicFixedDeltaTime;
+                _accumulatedTime -= LogicFixedDeltaTime + GlobalSwitch.Instance.AddReceiveDelay / 1000f;
                 PlayerInputSync.ApplyFrame(_currentFrame);
                 // 2. 推进帧
                 AdvanceFrame();
