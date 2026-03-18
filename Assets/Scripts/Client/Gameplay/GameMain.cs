@@ -22,9 +22,6 @@ namespace SyncSample.Client.Gameplay
         /// <summary> 客户端 Update 调度器，各模块注册 IUpdatable/IFixedUpdatable/ILateUpdatable 后由本类统一驱动并做异常隔离。 </summary>
         public static UpdateDispatcher Updater { get; } = new UpdateDispatcher();
 
-        /// <summary> 当前世界帧号，供输入等模块发送本帧/下一帧用。 </summary>
-        public long CurrentFrame => WorldManager.Instance.CurrentFrame;
-
         public void Initialize()
         {
             Logger.Log("GameMain Initialize");

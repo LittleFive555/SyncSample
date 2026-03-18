@@ -7,13 +7,16 @@ namespace SyncSample.Client.Gameplay
     /// <summary>
     /// 角色：逻辑与显示分离。逻辑位置为定点数，仅在同步到显示时用 FixedPoint 转为浮点。
     /// </summary>
-    public class Character : MonoBehaviour
+    public class Character : MonoBehaviour, ILogicEntity
     {
         [SerializeField] private Transform displayRoot;
         [SerializeField] private float moveSpeed = 3f;
 
         public string Id { get; private set; }
         public string Name { get; private set; }
+
+        private FixedPoint _dx;
+        private FixedPoint _dy;
 
         private FixedPoint _logicX;
         private FixedPoint _logicY;
@@ -22,6 +25,9 @@ namespace SyncSample.Client.Gameplay
         public float LogicX { get { return _logicX.ToFloat(); } }
         /// <summary> 逻辑位置 Y。 </summary>
         public float LogicY { get { return _logicY.ToFloat(); } }
+
+        public int Priority => 0;
+
 
         private void Awake()
         {
@@ -41,6 +47,12 @@ namespace SyncSample.Client.Gameplay
         private void OnDestroy()
         {
             UIInfo.Instance.UnregisterPos(this);
+        }
+
+        public void ReceiveInput(long frame, FixedPoint dx, FixedPoint dy)
+        {
+            _dx = dx;
+            _dy = dy;
         }
 
         /// <summary> 应用位移：先以定点数加到逻辑，再同步到显示（显示用浮点）。 </summary>
@@ -74,6 +86,11 @@ namespace SyncSample.Client.Gameplay
             p.x = _logicX.ToFloat();
             p.y = _logicY.ToFloat();
             displayRoot.localPosition = p;
+        }
+
+        public void OnLogicFrame(long frame)
+        {
+            ApplyMovement(_dx.ToFloat(), _dy.ToFloat());
         }
     }
 }

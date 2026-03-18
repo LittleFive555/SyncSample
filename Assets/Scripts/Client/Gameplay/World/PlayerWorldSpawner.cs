@@ -30,13 +30,13 @@ namespace SyncSample.Client.Gameplay
             _playersRoot = root.transform;
             client.OnMessageReceived += OnMessageReceived;
             client.OnDisconnected += OnDisconnected;
-            PlayerInputSync.SetMover(MovePlayer);
+            PlayerInputSync.SetInputReceiver(ReceiveInput);
             PlayerInputSync.SetExpectedClientCount(expectedClientCount);
         }
 
         private void OnDestroy()
         {
-            PlayerInputSync.SetMover(null);
+            PlayerInputSync.SetInputReceiver(null);
             if (client == null) return;
             client.OnMessageReceived -= OnMessageReceived;
             client.OnDisconnected -= OnDisconnected;
@@ -118,9 +118,6 @@ namespace SyncSample.Client.Gameplay
 
             int index = _playerObjects.Count;
             float startX = index * spawnSpacing;
-            go.transform.localPosition = new Vector3(startX, 0f, 0f);
-            go.transform.localRotation = Quaternion.identity;
-            go.transform.localScale = Vector3.one;
 
             var character = go.AddComponent<Character>();
             character.Init(id, displayName, startX, 0f);
@@ -137,14 +134,14 @@ namespace SyncSample.Client.Gameplay
         }
 
         /// <summary> 应用服务器下发的位移，在 WaitForAllClientsThisFrame 中被调用：先应用到逻辑，再同步到显示。 </summary>
-        public void MovePlayer(string clientId, float dx, float dy)
+        public void ReceiveInput(string clientId, long frame, FixedPoint dx, FixedPoint dy)
         {
             GameObject go;
             if (string.IsNullOrEmpty(clientId) || !_playerObjects.TryGetValue(clientId, out go) || go == null)
                 return;
             var character = go.GetComponent<Character>();
             if (character != null)
-                character.ApplyMovement(dx, dy);
+                character.ReceiveInput(frame, dx, dy);
         }
     }
 }

@@ -36,8 +36,7 @@ namespace SyncSample.Client.Gameplay
                 return;
 
             _lastSentFrame = currentFrame;
-            long frame = currentFrame + 1;
-            var msg = new PlayerInputMessage(frame, FixedPoint.FromFloat(_dx), FixedPoint.FromFloat(_dy));
+            var msg = new PlayerInputMessage(currentFrame, FixedPoint.FromFloat(_dx), FixedPoint.FromFloat(_dy));
             if (GlobalSwitch.Instance.AddSendDelay > 0)
             {
                 Task.Run(async () => {

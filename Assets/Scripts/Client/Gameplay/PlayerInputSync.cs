@@ -13,7 +13,7 @@ namespace SyncSample.Client.Gameplay
         private static readonly HashSet<string> ExpectedClientIds = new HashSet<string>();
         private static readonly object ExpectedLock = new object();
         private static int _expectedClientCount;
-        private static Action<string, float, float> _mover;
+        private static Action<string, long, FixedPoint, FixedPoint> _inputReceiver;
 
         public static bool AllClientsConnected()
         {
@@ -98,10 +98,9 @@ namespace SyncSample.Client.Gameplay
             }
         }
 
-        /// <summary> 由 PlayerWorldSpawner 等注册，用于应用位移。 </summary>
-        public static void SetMover(Action<string, float, float> mover)
+        public static void SetInputReceiver(Action<string, long, FixedPoint, FixedPoint> inputReceiver)
         {
-            _mover = mover;
+            _inputReceiver = inputReceiver;
         }
 
         /// <summary> 在收齐本帧输入后调用：应用本帧所有待处理输入后移除。 </summary>
@@ -120,9 +119,9 @@ namespace SyncSample.Client.Gameplay
                     }
                 }
             }
-            if (_mover == null) return;
+            if (_inputReceiver == null) return;
             foreach (var e in toApply)
-                _mover(e.clientId, e.dx.ToFloat(), e.dy.ToFloat());
+                _inputReceiver(e.clientId, e.frame, e.dx, e.dy);
         }
 
         private struct PlayerInputEntry
