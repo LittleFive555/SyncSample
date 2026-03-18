@@ -42,11 +42,13 @@ namespace SyncSample.Client.Gameplay
             Name = name;
             SetLogicPosition(x, y);
             UIInfo.Instance.RegisterPos(this);
+            WorldManager.Instance.RegisterLogicEntity(this);
         }
 
         private void OnDestroy()
         {
             UIInfo.Instance.UnregisterPos(this);
+            WorldManager.Instance.UnregisterLogicEntity(this);
         }
 
         public void ReceiveInput(long frame, FixedPoint dx, FixedPoint dy)
