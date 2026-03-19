@@ -31,7 +31,7 @@ namespace SyncSample.Client.Gameplay
                         int receiveDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddReceiveDelay : 0;
                         if (receiveDelayMs > 0)
                         {
-                            GameLooper.Instance.RunAfterDelayMilliseconds(receiveDelayMs, () =>
+                            GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(receiveDelayMs, () =>
                             {
                                 try
                                 {

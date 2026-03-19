@@ -10,19 +10,16 @@ namespace SyncSample.Common
             get
             {
                 if (_instance == null)
-                {
                     _instance = FindObjectOfType<GlobalSwitch>();
-                    DontDestroyOnLoad(_instance.gameObject);
-                }
                 return _instance;
             }
         }
 
+        [SerializeField, Header("使用锁步/状态同步")]
+        public bool UseLockstep = false;
         [SerializeField, Header("添加发送延迟(ms)")]
         public int AddSendDelay = 0;
         [SerializeField, Header("添加接收延迟(ms)")]
         public int AddReceiveDelay = 0;
-        [SerializeField, Header("使用锁步(Lockstep)")]
-        public bool UseLockstep = false;
     }
 }

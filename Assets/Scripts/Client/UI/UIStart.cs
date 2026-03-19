@@ -8,9 +8,6 @@ namespace SyncSample.Client.UI
         [SerializeField]
         private Button btnStart;
 
-        [SerializeField]
-        private TcpGameClient tcpGameClient;
-
         private void Awake()
         {
             btnStart.onClick.AddListener(ConnectServer);
@@ -18,7 +15,7 @@ namespace SyncSample.Client.UI
 
         private void ConnectServer()
         {
-            tcpGameClient.Connect();
+            GameMain.Instance.ConnectServer();
             gameObject.SetActive(false);
         }
     }

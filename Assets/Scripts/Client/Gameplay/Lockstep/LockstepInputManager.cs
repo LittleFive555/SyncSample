@@ -49,7 +49,7 @@ namespace SyncSample.Client.Gameplay
             if (sendDelayMs > 0)
             {
                 var c = client;
-                GameLooper.Instance.RunAfterDelayMilliseconds(sendDelayMs, () =>
+                GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(sendDelayMs, () =>
                 {
                     if (c != null && c.IsConnected)
                         c.Send(MessageType.PlayerInput, json);

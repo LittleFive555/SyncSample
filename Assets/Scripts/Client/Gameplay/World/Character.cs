@@ -42,14 +42,14 @@ namespace SyncSample.Client.Gameplay
             Name = name;
             SetLogicPosition(x, y);
             UIInfo.Instance.RegisterPos(this);
-            if (GlobalSwitch.Instance == null || GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.UseLockstep)
                 LockstepWorldManager.Instance.RegisterLogicEntity(this);
         }
 
         private void OnDestroy()
         {
             UIInfo.Instance.UnregisterPos(this);
-            if (GlobalSwitch.Instance == null || GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.UseLockstep)
                 LockstepWorldManager.Instance.UnregisterLogicEntity(this);
         }
 

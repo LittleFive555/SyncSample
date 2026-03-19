@@ -58,7 +58,7 @@ namespace SyncSample.Client.Gameplay
                         FixedPoint dy = input.dy;
                         if (receiveDelayMs > 0)
                         {
-                            GameLooper.Instance.RunAfterDelayMilliseconds(receiveDelayMs,
+                            GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(receiveDelayMs,
                                 () => LockstepPlayerInputSync.AddPending(frame, clientId, dx, dy));
                         }
                         else

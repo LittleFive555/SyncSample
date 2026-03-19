@@ -11,12 +11,10 @@ namespace SyncSample.Client.Gameplay
     /// </summary>
     public class CharacterManager : MonoBehaviour
     {
-        [SerializeField] private TcpGameClient client;
         [SerializeField] private PrimitiveType playerShape = PrimitiveType.Capsule;
         [SerializeField] private Color localPlayerColor = new Color(0.2f, 0.6f, 1f);
         [SerializeField] private Color remotePlayerColor = new Color(0.6f, 0.6f, 0.6f);
         [SerializeField] private float spawnSpacing = 2f;
-        [SerializeField] private int expectedClientCount = 2;
 
         public static CharacterManager Instance { get; private set; }
 
@@ -27,31 +25,9 @@ namespace SyncSample.Client.Gameplay
         private void Awake()
         {
             Instance = this;
-            if (client == null) client = FindObjectOfType<TcpGameClient>();
-            if (client == null) return;
             var root = new GameObject("Players");
             root.transform.SetParent(transform);
             _playersRoot = root.transform;
-            client.OnDisconnected += OnDisconnected;
-            LockstepPlayerInputSync.SetExpectedClientCount(expectedClientCount);
-        }
-
-        private void OnDestroy()
-        {
-            if (client == null) return;
-            client.OnDisconnected -= OnDisconnected;
-        }
-
-        private void OnDisconnected()
-        {
-            foreach (var go in _playerObjects.Values)
-            {
-                if (go != null) Destroy(go);
-            }
-            _playerObjects.Clear();
-            SelfId = null;
-            if (GlobalSwitch.Instance != null && !GlobalSwitch.Instance.UseLockstep)
-                SyncStateWorldManager.Instance.ResetSession();
         }
 
         public void EnsurePlayer(string id, string displayName)
