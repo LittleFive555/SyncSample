@@ -5,9 +5,9 @@ using UnityEngine;
 namespace SyncSample.Client.Gameplay
 {
     /// <summary>
-    /// 采集上下左右输入，在 WorldManager 推进逻辑帧之后由 Dispatcher 驱动，每逻辑帧仅发送一次（含空操作）。
+    /// 采集上下左右输入；在 Update 中检测逻辑帧推进，每逻辑帧仅发送一次（含空操作）。
     /// </summary>
-    public class PlayerInputSender : MonoBehaviour
+    public class LockstepPlayerInputSender : MonoBehaviour
     {
         [SerializeField] private TcpGameClient client;
 
@@ -24,24 +24,28 @@ namespace SyncSample.Client.Gameplay
         {
             _dx = Input.GetAxisRaw("Horizontal");
             _dy = Input.GetAxisRaw("Vertical");
+            SendInput();
         }
 
-        private void FixedUpdate()
+        private void SendInput()
         {
             if (client == null || !client.IsConnected) return;
-            if (!PlayerInputSync.AllClientsConnected()) return;
+            if (!LockstepPlayerInputSync.AllClientsConnected()) return;
 
-            long currentFrame = WorldManager.Instance.CurrentFrame;
+            long currentFrame = LockstepWorldManager.Instance.CurrentFrame;
             if (currentFrame <= _lastSentFrame)
                 return;
 
             _lastSentFrame = currentFrame;
             var msg = new PlayerInputMessage(currentFrame, FixedPoint.FromFloat(_dx), FixedPoint.FromFloat(_dy));
-            if (GlobalSwitch.Instance.AddSendDelay > 0)
+            int sendDelay = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
+            if (sendDelay > 0)
             {
-                Task.Run(async () => {
-                    await Task.Delay(GlobalSwitch.Instance.AddSendDelay);
-                    client.Send(MessageType.PlayerInput, JsonUtility.ToJson(msg));
+                Task.Run(async () =>
+                {
+                    await Task.Delay(sendDelay);
+                    if (client != null && client.IsConnected)
+                        client.Send(MessageType.PlayerInput, JsonUtility.ToJson(msg));
                 });
             }
             else
@@ -49,5 +53,6 @@ namespace SyncSample.Client.Gameplay
                 client.Send(MessageType.PlayerInput, JsonUtility.ToJson(msg));
             }
         }
+
     }
 }

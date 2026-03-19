@@ -7,17 +7,16 @@ namespace SyncSample.Client.Gameplay
     /// <summary>
     /// 暂存服务器下发的玩家输入，在 WorldManager 收齐本帧所有客户端输入后按帧取出并生效（lockstep）。
     /// </summary>
-    public static class PlayerInputSync
+    public static class LockstepPlayerInputSync
     {
         private static readonly List<PlayerInputEntry> Pending = new List<PlayerInputEntry>();
-        private static readonly HashSet<string> ExpectedClientIds = new HashSet<string>();
+        private static readonly HashSet<string> AllClientIds = new HashSet<string>();
         private static readonly object ExpectedLock = new object();
         private static int _expectedClientCount;
-        private static Action<string, long, FixedPoint, FixedPoint> _inputReceiver;
 
         public static bool AllClientsConnected()
         {
-            return ExpectedClientIds.Count == _expectedClientCount;
+            return AllClientIds.Count == _expectedClientCount;
         }
 
         /// <summary> dx, dy 为协议中的定点数，应用时再转为浮点。 </summary>
@@ -30,29 +29,29 @@ namespace SyncSample.Client.Gameplay
         }
 
         /// <summary> 设置 lockstep 期望的客户端集合（收到 ClientList 时调用）。 </summary>
-        public static void SetExpectedClients(IEnumerable<string> clientIds)
+        public static void SetClients(IEnumerable<string> clientIds)
         {
             lock (ExpectedLock)
             {
-                ExpectedClientIds.Clear();
+                AllClientIds.Clear();
                 if (clientIds != null)
                 {
                     foreach (var id in clientIds)
                     {
                         if (!string.IsNullOrEmpty(id))
-                            ExpectedClientIds.Add(id);
+                            AllClientIds.Add(id);
                     }
                 }
             }
         }
 
         /// <summary> 新增一名 lockstep 参与者（收到 ClientJoined 时调用）。 </summary>
-        public static void AddExpectedClient(string clientId)
+        public static void AddClient(string clientId)
         {
             if (string.IsNullOrEmpty(clientId)) return;
             lock (ExpectedLock)
             {
-                ExpectedClientIds.Add(clientId);
+                AllClientIds.Add(clientId);
             }
         }
 
@@ -80,7 +79,7 @@ namespace SyncSample.Client.Gameplay
             }
             lock (ExpectedLock)
             {
-                if (ExpectedClientIds.Count == 0)
+                if (AllClientIds.Count == 0)
                     return true;
             }
             lock (Pending)
@@ -93,14 +92,9 @@ namespace SyncSample.Client.Gameplay
                 }
                 lock (ExpectedLock)
                 {
-                    return receivedForFrame.IsSupersetOf(ExpectedClientIds);
+                    return receivedForFrame.IsSupersetOf(AllClientIds);
                 }
             }
-        }
-
-        public static void SetInputReceiver(Action<string, long, FixedPoint, FixedPoint> inputReceiver)
-        {
-            _inputReceiver = inputReceiver;
         }
 
         /// <summary> 在收齐本帧输入后调用：应用本帧所有待处理输入后移除。 </summary>
@@ -119,9 +113,8 @@ namespace SyncSample.Client.Gameplay
                     }
                 }
             }
-            if (_inputReceiver == null) return;
             foreach (var e in toApply)
-                _inputReceiver(e.clientId, e.frame, e.dx, e.dy);
+                CharacterManager.Instance.ReceiveInput(e.clientId, e.frame, e.dx, e.dy);
         }
 
         private struct PlayerInputEntry

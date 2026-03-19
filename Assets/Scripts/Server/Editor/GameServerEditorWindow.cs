@@ -87,7 +87,7 @@ namespace SyncSample.Server.Editor
 
         private void OnMessageReceived(ClientSession session, NetworkEnvelope envelope)
         {
-            GameServerMessageHandlers.Handle(_server, session, envelope);
+            GameServerMessageDispatcher.Handle(_server, session, envelope);
         }
     }
 }

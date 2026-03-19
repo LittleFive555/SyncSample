@@ -42,13 +42,15 @@ namespace SyncSample.Client.Gameplay
             Name = name;
             SetLogicPosition(x, y);
             UIInfo.Instance.RegisterPos(this);
-            WorldManager.Instance.RegisterLogicEntity(this);
+            if (GlobalSwitch.Instance == null || GlobalSwitch.Instance.UseLockstep)
+                LockstepWorldManager.Instance.RegisterLogicEntity(this);
         }
 
         private void OnDestroy()
         {
             UIInfo.Instance.UnregisterPos(this);
-            WorldManager.Instance.UnregisterLogicEntity(this);
+            if (GlobalSwitch.Instance == null || GlobalSwitch.Instance.UseLockstep)
+                LockstepWorldManager.Instance.UnregisterLogicEntity(this);
         }
 
         public void ReceiveInput(long frame, FixedPoint dx, FixedPoint dy)
@@ -71,6 +73,14 @@ namespace SyncSample.Client.Gameplay
             _logicX = FixedPoint.FromFloat(x);
             _logicY = FixedPoint.FromFloat(y);
             SyncDisplayFromLogic();
+        }
+
+        /// <summary> 应用服务器下发的世界状态（位置与当前输入方向）。 </summary>
+        public void ApplyWorldState(float x, float y, float dx, float dy)
+        {
+            SetLogicPosition(x, y);
+            _dx = FixedPoint.FromFloat(dx);
+            _dy = FixedPoint.FromFloat(dy);
         }
 
         /// <summary> 从当前显示读取到逻辑（初始化或校正用），转为定点存储。 </summary>

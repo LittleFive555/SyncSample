@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using SyncSample.Common;
+using SyncSample.Server.Gameplay;
 
 namespace SyncSample.Server
 {
@@ -41,6 +42,9 @@ namespace SyncSample.Server
         {
             if (_running) return;
             _running = true;
+            if (!GlobalSwitch.Instance.UseLockstep)
+                StateSyncWorldManager.Instance.Start(this);
+
             _listener = new TcpListener(IPAddress.Any, _port);
             _listener.Start();
             _acceptThread = new Thread(AcceptLoop) { IsBackground = true };

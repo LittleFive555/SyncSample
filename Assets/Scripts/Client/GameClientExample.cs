@@ -21,10 +21,18 @@ namespace SyncSample.Client
             Logger.Log("Before Launch");
             // 初始化单例
             GameMain.Instance.Initialize();
-            WorldManager.Instance.Initialize();
+            bool useLockstep = GlobalSwitch.Instance != null && GlobalSwitch.Instance.UseLockstep;
+            if (useLockstep)
+            {
+                LockstepWorldManager.Instance.Initialize();
+                GameMain.Updater.Register(LockstepWorldManager.Instance);
+            }
+            else
+            {
+                SyncStateWorldManager.Instance.Initialize();
+                GameMain.Updater.Register(SyncStateWorldManager.Instance);
+            }
 
-            // 注册调度器
-            GameMain.Updater.Register(WorldManager.Instance);
             Logger.Log("After Launch");
         }
 
@@ -35,6 +43,10 @@ namespace SyncSample.Client
             client.OnConnected += OnConnected;
             client.OnDisconnected += OnDisconnected;
             client.OnMessageReceived += OnMessageReceived;
+            if (GlobalSwitch.Instance.UseLockstep)
+                client.OnMessageReceived += LockstepMessageHandlers.OnMessageReceived;
+            else
+                client.OnMessageReceived += SyncStateMessageHandlers.OnMessageReceived;
         }
 
         private void OnDestroy()
@@ -43,6 +55,10 @@ namespace SyncSample.Client
             client.OnConnected -= OnConnected;
             client.OnDisconnected -= OnDisconnected;
             client.OnMessageReceived -= OnMessageReceived;
+            if (GlobalSwitch.Instance.UseLockstep)
+                client.OnMessageReceived -= LockstepMessageHandlers.OnMessageReceived;
+            else
+                client.OnMessageReceived -= SyncStateMessageHandlers.OnMessageReceived;
         }
 
         private void OnConnected()

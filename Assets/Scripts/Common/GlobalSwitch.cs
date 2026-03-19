@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SyncSample.Client
+namespace SyncSample.Common
 {
     public class GlobalSwitch : MonoBehaviour
     {
@@ -10,6 +10,8 @@ namespace SyncSample.Client
         public int AddSendDelay = 0;
         [SerializeField, Header("添加接收延迟(ms)")]
         public int AddReceiveDelay = 0;
+        [SerializeField, Header("使用锁步(Lockstep)")]
+        public bool UseLockstep = false;
 
         private void Awake()
         {

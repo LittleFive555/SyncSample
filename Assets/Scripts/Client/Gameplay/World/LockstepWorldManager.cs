@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SyncSample.Common;
 
 namespace SyncSample.Client.Gameplay
 {
@@ -11,15 +12,15 @@ namespace SyncSample.Client.Gameplay
     /// <summary>
     /// 基于 FixedUpdate 的帧更新器。内部使用独立的 UpdateDispatcher 驱动本帧逻辑下的模块（如 PlayerInputSender），与 GameMain 的 Dispatcher 分离。
     /// </summary>
-    public class WorldManager : IUpdatable
+    public class LockstepWorldManager : IUpdatable
     {
-        private static WorldManager _instance;
-        public static WorldManager Instance
+        private static LockstepWorldManager _instance;
+        public static LockstepWorldManager Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = new WorldManager();
+                    _instance = new LockstepWorldManager();
                 return _instance;
             }
         }
@@ -44,21 +45,21 @@ namespace SyncSample.Client.Gameplay
 
         public void OnUpdate(float deltaTime)
         {
-            if (!PlayerInputSync.AllClientsConnected()) return;
+            if (!LockstepPlayerInputSync.AllClientsConnected()) return;
 
             if (!_isWaitingForAllClients) // 如果在等待所有客户端输入，则不累积时间
                 _accumulatedTime += deltaTime;
 
             while (_accumulatedTime >= LogicFixedDeltaTime + GlobalSwitch.Instance.AddReceiveDelay / 1000f) // 如果累积时间大于逻辑固定时间步，则推进一帧
             {
-                if (!PlayerInputSync.HasAllInputsForFrame(_currentFrame))
+                if (!LockstepPlayerInputSync.HasAllInputsForFrame(_currentFrame))
                 {
                     _isWaitingForAllClients = true;
                     return;
                 }
                 _isWaitingForAllClients = false;
                 _accumulatedTime -= LogicFixedDeltaTime + GlobalSwitch.Instance.AddReceiveDelay / 1000f;
-                PlayerInputSync.ApplyFrame(_currentFrame);
+                LockstepPlayerInputSync.ApplyFrame(_currentFrame);
                 // 2. 推进帧
                 AdvanceFrame();
             }

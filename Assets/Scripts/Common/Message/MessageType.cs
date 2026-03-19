@@ -15,6 +15,8 @@ namespace SyncSample.Common
         public const string Join = "join";
         /// <summary> 服务器回复：当前所有已连接客户端信息 </summary>
         public const string ClientList = "client_list";
+        /// <summary> 服务器回复（Join 后）：当前世界内所有角色实体状态 </summary>
+        public const string WorldState = "world_state";
         /// <summary> 服务器广播：有新客户端加入，payload 为单条 ClientInfo </summary>
         public const string ClientJoined = "client_joined";
 
