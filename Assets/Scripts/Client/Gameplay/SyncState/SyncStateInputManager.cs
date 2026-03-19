@@ -8,7 +8,7 @@ namespace SyncSample.Client.Gameplay
     /// <summary>
     /// 状态同步模式：采集本机轴向输入，按服务器逻辑帧间隔发往服务器（不驱动本地世界推演）。
     /// </summary>
-    public class SyncStatePlayerInputSender : MonoBehaviour
+    public class SyncStateInputManager : MonoBehaviour
     {
         [SerializeField] private TcpGameClient client;
 
@@ -19,6 +19,13 @@ namespace SyncSample.Client.Gameplay
         /// <summary> 下一条发往服务器的输入所带的逻辑帧号，单调递增，避免同一帧号重复发送。 </summary>
         private long _nextOutgoingFrame;
         private long _lastServerFrame = -1;
+
+        public static void Initialize()
+        {
+            var obj = new GameObject("SyncStateInputManager");
+            obj.AddComponent<SyncStateInputManager>();
+            DontDestroyOnLoad(obj);
+        }
 
         private void Awake()
         {

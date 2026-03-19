@@ -7,13 +7,20 @@ namespace SyncSample.Client.Gameplay
     /// <summary>
     /// 采集上下左右输入；在 Update 中检测逻辑帧推进，每逻辑帧仅发送一次（含空操作）。
     /// </summary>
-    public class LockstepPlayerInputSender : MonoBehaviour
+    public class LockstepInputManager : MonoBehaviour
     {
         [SerializeField] private TcpGameClient client;
 
         private float _dx;
         private float _dy;
         private long _lastSentFrame = -1;
+
+        public static void Initialize()
+        {
+            var obj = new GameObject("LockstepInputManager");
+            obj.AddComponent<LockstepInputManager>();
+            DontDestroyOnLoad(obj);
+        }
 
         private void Awake()
         {

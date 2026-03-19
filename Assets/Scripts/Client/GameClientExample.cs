@@ -20,17 +20,18 @@ namespace SyncSample.Client
         {
             Logger.Log("Before Launch");
             // 初始化单例
-            GameMain.Instance.Initialize();
-            bool useLockstep = GlobalSwitch.Instance != null && GlobalSwitch.Instance.UseLockstep;
-            if (useLockstep)
+            GameLooper.Instance.Initialize();
+            if (GlobalSwitch.Instance.UseLockstep)
             {
+                LockstepInputManager.Initialize();
                 LockstepWorldManager.Instance.Initialize();
-                GameMain.Updater.Register(LockstepWorldManager.Instance);
+                GameLooper.Updater.Register(LockstepWorldManager.Instance);
             }
             else
             {
+                SyncStateInputManager.Initialize();
                 SyncStateWorldManager.Instance.Initialize();
-                GameMain.Updater.Register(SyncStateWorldManager.Instance);
+                GameLooper.Updater.Register(SyncStateWorldManager.Instance);
             }
 
             Logger.Log("After Launch");

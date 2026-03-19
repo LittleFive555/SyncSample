@@ -3,16 +3,16 @@ using UnityEngine;
 
 namespace SyncSample.Client.Gameplay
 {
-    public class GameMain : MonoBehaviour
+    public class GameLooper : MonoBehaviour
     {
-        private static GameMain _instance;
-        public static GameMain Instance
+        private static GameLooper _instance;
+        public static GameLooper Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new GameObject("GameMain").AddComponent<GameMain>();
+                    _instance = new GameObject("GameMain").AddComponent<GameLooper>();
                     DontDestroyOnLoad(_instance.gameObject);
                 }
                 return _instance;
