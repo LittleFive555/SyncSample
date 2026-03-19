@@ -27,8 +27,28 @@ namespace SyncSample.Client.Gameplay
                 case MessageType.WorldState:
                     try
                     {
-                        var worldState = JsonUtility.FromJson<WorldStateMessage>(envelope.payload);
-                        SyncStateWorldManager.Instance.UpdateWorldState(worldState);
+                        string payload = envelope.payload;
+                        int receiveDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddReceiveDelay : 0;
+                        if (receiveDelayMs > 0)
+                        {
+                            GameLooper.Instance.RunAfterDelayMilliseconds(receiveDelayMs, () =>
+                            {
+                                try
+                                {
+                                    var worldState = JsonUtility.FromJson<WorldStateMessage>(payload);
+                                    SyncStateWorldManager.Instance.UpdateWorldState(worldState);
+                                }
+                                catch (System.Exception ex)
+                                {
+                                    Logger.LogWarning("PlayerWorldSpawner WorldState 解析失败(延迟): " + ex.Message);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            var worldState = JsonUtility.FromJson<WorldStateMessage>(payload);
+                            SyncStateWorldManager.Instance.UpdateWorldState(worldState);
+                        }
                     }
                     catch (System.Exception e)
                     {

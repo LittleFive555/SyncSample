@@ -50,7 +50,8 @@ namespace SyncSample.Client.Gameplay
             if (!_isWaitingForAllClients) // 如果在等待所有客户端输入，则不累积时间
                 _accumulatedTime += deltaTime;
 
-            while (_accumulatedTime >= LogicFixedDeltaTime + GlobalSwitch.Instance.AddReceiveDelay / 1000f) // 如果累积时间大于逻辑固定时间步，则推进一帧
+            // 接收延迟在 LockstepMessageHandlers 中延迟入队，不拉长本地逻辑帧间隔（否则会错误改变帧率）
+            while (_accumulatedTime >= LogicFixedDeltaTime)
             {
                 if (!LockstepPlayerInputSync.HasAllInputsForFrame(_currentFrame))
                 {
@@ -58,7 +59,7 @@ namespace SyncSample.Client.Gameplay
                     return;
                 }
                 _isWaitingForAllClients = false;
-                _accumulatedTime -= LogicFixedDeltaTime + GlobalSwitch.Instance.AddReceiveDelay / 1000f;
+                _accumulatedTime -= LogicFixedDeltaTime;
                 LockstepPlayerInputSync.ApplyFrame(_currentFrame);
                 // 2. 推进帧
                 AdvanceFrame();

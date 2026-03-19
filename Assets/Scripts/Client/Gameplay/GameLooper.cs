@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace SyncSample.Client.Gameplay
@@ -25,6 +26,27 @@ namespace SyncSample.Client.Gameplay
         public void Initialize()
         {
             Logger.Log("GameMain Initialize");
+        }
+
+        /// <summary>
+        /// 在主线程上延迟执行（模拟网络延迟）。发送/入队等涉及 Unity 或网络 API 的逻辑应通过此方法调度，勿用 Task.Run。
+        /// </summary>
+        public void RunAfterDelayMilliseconds(int delayMs, Action action)
+        {
+            if (action == null) return;
+            if (delayMs <= 0)
+            {
+                action();
+                return;
+            }
+            StartCoroutine(RunAfterDelayCoroutine(delayMs / 1000f, action));
+        }
+
+        private static IEnumerator RunAfterDelayCoroutine(float seconds, Action action)
+        {
+            if (seconds > 0f)
+                yield return new WaitForSecondsRealtime(seconds);
+            action?.Invoke();
         }
 
         private void Update()

@@ -49,8 +49,20 @@ namespace SyncSample.Client.Gameplay
                     {
                         var input = JsonUtility.FromJson<PlayerInputMessage>(envelope.payload);
                         // Logger.Log("PlayerWorldSpawner PlayerInput: " + input.frame + " " + input.clientId + " " + input.dx.raw + " " + input.dy.raw);
-                        if (!string.IsNullOrEmpty(input.clientId))
-                            LockstepPlayerInputSync.AddPending(input.frame, input.clientId, input.dx, input.dy);
+                        if (string.IsNullOrEmpty(input.clientId))
+                            break;
+                        int receiveDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddReceiveDelay : 0;
+                        long frame = input.frame;
+                        string clientId = input.clientId;
+                        FixedPoint dx = input.dx;
+                        FixedPoint dy = input.dy;
+                        if (receiveDelayMs > 0)
+                        {
+                            GameLooper.Instance.RunAfterDelayMilliseconds(receiveDelayMs,
+                                () => LockstepPlayerInputSync.AddPending(frame, clientId, dx, dy));
+                        }
+                        else
+                            LockstepPlayerInputSync.AddPending(frame, clientId, dx, dy);
                     }
                     catch (System.Exception e)
                     {

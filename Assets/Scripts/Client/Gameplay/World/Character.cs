@@ -75,14 +75,6 @@ namespace SyncSample.Client.Gameplay
             SyncDisplayFromLogic();
         }
 
-        /// <summary> 应用服务器下发的世界状态（位置与当前输入方向）。 </summary>
-        public void ApplyWorldState(float x, float y, float dx, float dy)
-        {
-            SetLogicPosition(x, y);
-            _dx = FixedPoint.FromFloat(dx);
-            _dy = FixedPoint.FromFloat(dy);
-        }
-
         /// <summary> 从当前显示读取到逻辑（初始化或校正用），转为定点存储。 </summary>
         public void SyncLogicFromDisplay()
         {
@@ -103,6 +95,14 @@ namespace SyncSample.Client.Gameplay
         public void OnLogicFrame(long frame)
         {
             ApplyMovement(_dx.ToFloat(), _dy.ToFloat());
+        }
+
+        /// <summary> 应用服务器下发的世界状态（位置与当前输入方向）。 </summary>
+        public void ApplyWorldState(float x, float y, float dx, float dy)
+        {
+            SetLogicPosition(x, y);
+            _dx = FixedPoint.FromFloat(dx);
+            _dy = FixedPoint.FromFloat(dy);
         }
     }
 }
