@@ -4,7 +4,19 @@ namespace SyncSample.Common
 {
     public class GlobalSwitch : MonoBehaviour
     {
-        public static GlobalSwitch Instance;
+        private static GlobalSwitch _instance;
+        public static GlobalSwitch Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType<GlobalSwitch>();
+                    DontDestroyOnLoad(_instance.gameObject);
+                }
+                return _instance;
+            }
+        }
 
         [SerializeField, Header("添加发送延迟(ms)")]
         public int AddSendDelay = 0;
@@ -12,10 +24,5 @@ namespace SyncSample.Common
         public int AddReceiveDelay = 0;
         [SerializeField, Header("使用锁步(Lockstep)")]
         public bool UseLockstep = false;
-
-        private void Awake()
-        {
-            Instance = this;
-        }
     }
 }
