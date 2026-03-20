@@ -174,10 +174,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Airplane2
       objectReference: {fileID: 0}
-    - target: {fileID: 6136304944215045670, guid: 59fbf3ae9b9537c418e75b60dc508399, type: 3}
-      propertyPath: _playerType
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
