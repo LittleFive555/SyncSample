@@ -71,8 +71,8 @@ namespace SyncSample.Client.Gameplay
         /// <summary> 应用位移：先以定点数加到逻辑，再同步到显示（显示用浮点）。 </summary>
         public void ApplyMovement(float dx, float dy)
         {
-            _logicX = FixedPoint.FromFloat(_logicX.ToFloat() + dx * moveSpeed * Time.fixedDeltaTime);
-            _logicY = FixedPoint.FromFloat(_logicY.ToFloat() + dy * moveSpeed * Time.fixedDeltaTime);
+            _logicX = FixedPoint.FromFloat(_logicX.ToFloat() + dx * moveSpeed * GlobalSwitch.Instance.LogicFixedDeltaTime);
+            _logicY = FixedPoint.FromFloat(_logicY.ToFloat() + dy * moveSpeed * GlobalSwitch.Instance.LogicFixedDeltaTime);
             if (!GlobalSwitch.Instance.LockstepInterpolation)
                 SyncDisplayFromLogic();
         }
