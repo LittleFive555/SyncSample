@@ -428,7 +428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69c88da5eb07f4c42ba77c6a72a31b1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ServerAddress: 127.0.0.1
+  ServerAddress: 10.0.88.206
   ServerPort: 8888
   PingInterval: 2
   ExpectedClientCount: 2
@@ -459,9 +459,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96645c956937bc4295d4e1ff1fbfe33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UseLockstep: 1
   AddSendDelay: 0
   AddReceiveDelay: 0
-  UseLockstep: 0
+  LockstepInterpolation: 0
 --- !u!1 &749097568
 GameObject:
   m_ObjectHideFlags: 0
