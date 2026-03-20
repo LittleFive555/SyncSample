@@ -50,6 +50,7 @@ namespace SyncSample.Client.Gameplay
         {
             if (GlobalSwitch.Instance.LockstepInterpolation)
             {
+                // 为了简单处理，逻辑和显示上，都将X和Y分开处理
                 Vector3 onlyX = Vector3.MoveTowards(displayRoot.localPosition, new Vector3(LogicX, displayRoot.localPosition.y, 0), moveSpeed * Time.deltaTime);
                 Vector3 onlyY = Vector3.MoveTowards(displayRoot.localPosition, new Vector3(displayRoot.localPosition.x, LogicY, 0), moveSpeed * Time.deltaTime);
                 displayRoot.localPosition = new Vector3(onlyX.x, onlyY.y, 0);
