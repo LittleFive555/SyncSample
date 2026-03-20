@@ -46,6 +46,15 @@ namespace SyncSample.Client.Gameplay
                 LockstepWorldManager.Instance.RegisterLogicEntity(this);
         }
 
+        private void Update()
+        {
+            if (GlobalSwitch.Instance.LockstepInterpolation)
+            {
+                Vector3 newPosition = Vector3.MoveTowards(displayRoot.localPosition, new Vector3(LogicX, LogicY, 0), moveSpeed * Time.deltaTime);
+                displayRoot.localPosition = newPosition;
+            }
+        }
+
         private void OnDestroy()
         {
             UIInfo.Instance.UnregisterPos(this);
@@ -64,7 +73,8 @@ namespace SyncSample.Client.Gameplay
         {
             _logicX = FixedPoint.FromFloat(_logicX.ToFloat() + dx * moveSpeed * Time.fixedDeltaTime);
             _logicY = FixedPoint.FromFloat(_logicY.ToFloat() + dy * moveSpeed * Time.fixedDeltaTime);
-            SyncDisplayFromLogic();
+            if (!GlobalSwitch.Instance.LockstepInterpolation)
+                SyncDisplayFromLogic();
         }
 
         /// <summary> 设置逻辑位置（浮点入，内部存定点）后同步到显示。 </summary>

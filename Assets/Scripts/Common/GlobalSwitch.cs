@@ -21,5 +21,11 @@ namespace SyncSample.Common
         public int AddSendDelay = 0;
         [SerializeField, Header("添加接收延迟(ms)")]
         public int AddReceiveDelay = 0;
+
+        [Header("锁步同步：")]
+        [SerializeField, Header("逻辑帧间隔(ms)")]
+        public float LogicFixedDeltaTime = 0.03333333f;
+        [SerializeField, Header("是否启用插值")]
+        public bool LockstepInterpolation = false;
     }
 }

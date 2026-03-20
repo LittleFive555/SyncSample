@@ -36,7 +36,7 @@ namespace SyncSample.Client.Gameplay
         private bool _isWaitingForAllClients;
         public bool IsBlockedForSyncing => _isWaitingForAllClients;
 
-        public float LogicFixedDeltaTime { get; set; } = 0.03333333f;
+        public float LogicFixedDeltaTime => GlobalSwitch.Instance.LogicFixedDeltaTime;
 
         public void Initialize()
         {
