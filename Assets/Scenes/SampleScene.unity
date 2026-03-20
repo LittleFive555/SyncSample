@@ -462,6 +462,7 @@ MonoBehaviour:
   UseLockstep: 1
   AddSendDelay: 0
   AddReceiveDelay: 0
+  LogicFixedDeltaTime: 0.033333
   LockstepInterpolation: 0
 --- !u!1 &749097568
 GameObject:

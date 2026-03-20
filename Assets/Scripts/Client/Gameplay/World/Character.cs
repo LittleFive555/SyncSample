@@ -50,8 +50,9 @@ namespace SyncSample.Client.Gameplay
         {
             if (GlobalSwitch.Instance.LockstepInterpolation)
             {
-                Vector3 newPosition = Vector3.MoveTowards(displayRoot.localPosition, new Vector3(LogicX, LogicY, 0), moveSpeed * Time.deltaTime);
-                displayRoot.localPosition = newPosition;
+                Vector3 onlyX = Vector3.MoveTowards(displayRoot.localPosition, new Vector3(LogicX, displayRoot.localPosition.y, 0), moveSpeed * Time.deltaTime);
+                Vector3 onlyY = Vector3.MoveTowards(displayRoot.localPosition, new Vector3(displayRoot.localPosition.x, LogicY, 0), moveSpeed * Time.deltaTime);
+                displayRoot.localPosition = new Vector3(onlyX.x, onlyY.y, 0);
             }
         }
 
@@ -114,5 +115,6 @@ namespace SyncSample.Client.Gameplay
             _dx = FixedPoint.FromFloat(dx);
             _dy = FixedPoint.FromFloat(dy);
         }
+
     }
 }
