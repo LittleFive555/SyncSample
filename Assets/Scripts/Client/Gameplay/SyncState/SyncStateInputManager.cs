@@ -9,8 +9,6 @@ namespace SyncSample.Client.Gameplay
     /// </summary>
     public class SyncStateInputManager : MonoBehaviour
     {
-        [SerializeField] private TcpGameClient client;
-
         private float _dx;
         private float _dy;
         private float _accumulatedSendTime;
@@ -26,12 +24,6 @@ namespace SyncSample.Client.Gameplay
             DontDestroyOnLoad(obj);
         }
 
-        private void Awake()
-        {
-            if (client == null)
-                client = FindObjectOfType<TcpGameClient>();
-        }
-
         private void Update()
         {
             _dx = Input.GetAxisRaw("Horizontal");
@@ -41,8 +33,6 @@ namespace SyncSample.Client.Gameplay
 
         private void SendInput()
         {
-            if (client == null || !client.IsConnected)
-                return;
             var world = SyncStateWorldManager.Instance;
             if (!world.HasWorldStateSynced)
             {
@@ -82,7 +72,7 @@ namespace SyncSample.Client.Gameplay
             int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
             if (sendDelayMs > 0)
             {
-                var c = client;
+                var c = GameMain.Instance.Client;
                 GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(sendDelayMs, () =>
                 {
                     if (c != null && c.IsConnected)
@@ -90,7 +80,7 @@ namespace SyncSample.Client.Gameplay
                 });
             }
             else
-                client.Send(MessageType.PlayerInput, json);
+                GameMain.Instance.Client.Send(MessageType.PlayerInput, json);
         }
     }
 }

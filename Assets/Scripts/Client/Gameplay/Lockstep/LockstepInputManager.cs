@@ -8,8 +8,6 @@ namespace SyncSample.Client.Gameplay
     /// </summary>
     public class LockstepInputManager : MonoBehaviour
     {
-        [SerializeField] private TcpGameClient client;
-
         private float _dx;
         private float _dy;
         private long _lastSentFrame = -1;
@@ -23,7 +21,6 @@ namespace SyncSample.Client.Gameplay
 
         private void Awake()
         {
-            if (client == null) client = FindObjectOfType<TcpGameClient>();
         }
 
         private void Update()
@@ -35,7 +32,6 @@ namespace SyncSample.Client.Gameplay
 
         private void SendInput()
         {
-            if (client == null || !client.IsConnected) return;
             if (!LockstepPlayerInputSync.AllClientsConnected()) return;
 
             long currentFrame = LockstepWorldManager.Instance.CurrentFrame;
@@ -48,7 +44,7 @@ namespace SyncSample.Client.Gameplay
             int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
             if (sendDelayMs > 0)
             {
-                var c = client;
+                var c = GameMain.Instance.Client;
                 GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(sendDelayMs, () =>
                 {
                     if (c != null && c.IsConnected)
@@ -56,7 +52,7 @@ namespace SyncSample.Client.Gameplay
                 });
             }
             else
-                client.Send(MessageType.PlayerInput, json);
+                GameMain.Instance.Client.Send(MessageType.PlayerInput, json);
         }
     }
 }
