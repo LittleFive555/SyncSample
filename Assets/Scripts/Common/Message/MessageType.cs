@@ -22,5 +22,7 @@ namespace SyncSample.Common
 
         /// <summary> 玩家输入：客户端发给服务器（仅 dx,dy,frame），服务器广播给所有人时带上 clientId </summary>
         public const string PlayerInput = "player_input";
+        /// <summary> 服务器广播：所有客户端的输入。 </summary>
+        public const string AllPlayerInput = "all_player_input";
     }
 }

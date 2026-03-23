@@ -11,6 +11,7 @@ namespace SyncSample.Client.UI
         [SerializeField] private TextMeshProUGUI _delay;
         [SerializeField] private Transform _posRoot;
         [SerializeField] private TextMeshProUGUI _posTemplate;
+        [SerializeField] private TextMeshProUGUI _lockstepStatus;
 
         private Dictionary<Character, TextMeshProUGUI> _posMap = new Dictionary<Character, TextMeshProUGUI>();
 
@@ -30,6 +31,11 @@ namespace SyncSample.Client.UI
         public void SetDelay(long delay)
         {
             _delay.text = $"Delay: {delay}ms";
+        }
+
+        public void SetLockstepStatus(long frame)
+        {
+            _lockstepStatus.text = $"Lockstep Frame: {frame}";
         }
 
         public void RegisterPos(Character character)

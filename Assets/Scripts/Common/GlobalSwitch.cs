@@ -23,9 +23,13 @@ namespace SyncSample.Common
         public int AddReceiveDelay = 0;
 
         [Header("锁步同步：")]
+        [SerializeField, Header("预期客户端数量")]
+        public int ExpectedClientCount = 2;
         [SerializeField, Header("逻辑帧间隔(s)")]
         public float LogicFixedDeltaTime = 0.03333333f;
         [SerializeField, Header("是否启用插值")]
         public bool LockstepInterpolation = false;
+        [SerializeField, Header("是否启用乐观锁步")]
+        public bool OptimisticLockstep = false;
     }
 }

@@ -21,9 +21,6 @@ namespace SyncSample.Client
         [SerializeField, Header("Ping间隔")]
         public float PingInterval = 2f;
 
-        [SerializeField, Header("预期客户端数量，用于帧同步")]
-        public int ExpectedClientCount = 2;
-
         public static GameMain Instance { get; private set; }
 
         [NonSerialized]
@@ -71,7 +68,7 @@ namespace SyncSample.Client
                 LockstepInputManager.Initialize();
                 LockstepWorldManager.Instance.Initialize();
                 GameLooper.Updater.Register(LockstepWorldManager.Instance);
-                LockstepPlayerInputSync.SetExpectedClientCount(ExpectedClientCount);
+                LockstepPlayerInputSync.SetExpectedClientCount(GlobalSwitch.Instance.ExpectedClientCount);
             }
             else
             {

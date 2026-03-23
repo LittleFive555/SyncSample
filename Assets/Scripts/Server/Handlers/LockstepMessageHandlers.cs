@@ -1,5 +1,6 @@
 using System;
 using SyncSample.Common;
+using SyncSample.Server.Gameplay;
 using UnityEngine;
 
 namespace SyncSample.Server
@@ -33,6 +34,10 @@ namespace SyncSample.Server
                 var newClientInfo = new ClientInfo(session.Id, session.Name);
                 string joinedPayload = JsonUtility.ToJson(newClientInfo);
                 server.BroadcastExcept(session, MessageType.ClientJoined, joinedPayload);
+
+                // NOTE 乐观锁步：当预期客户端数量达到时，启动锁步同步
+                if (GlobalSwitch.Instance.OptimisticLockstep && sessions.Length == GlobalSwitch.Instance.ExpectedClientCount)
+                    LockstepSyncManager.Instance.Start(server);
             }
             catch (Exception e)
             {
@@ -46,7 +51,10 @@ namespace SyncSample.Server
             {
                 var input = JsonUtility.FromJson<PlayerInputMessage>(payload);
                 input.clientId = session.Id;
-                server.Broadcast(MessageType.PlayerInput, JsonUtility.ToJson(input));
+                if (GlobalSwitch.Instance.OptimisticLockstep)
+                    LockstepSyncManager.Instance.AppendPlayerInput(session.Id, input);
+                else
+                    server.Broadcast(MessageType.PlayerInput, JsonUtility.ToJson(input));
             }
             catch (Exception e)
             {

@@ -69,6 +69,34 @@ namespace SyncSample.Client.Gameplay
                         Logger.LogWarning("PlayerWorldSpawner PlayerInput 解析失败: " + e.Message);
                     }
                     break;
+                case MessageType.AllPlayerInput:
+                    try
+                    {
+                        var allPlayerInput = JsonUtility.FromJson<AllPlayerInputMessage>(envelope.payload);
+                        int receiveDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddReceiveDelay : 0;
+                        if (receiveDelayMs > 0)
+                        {
+                            GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(
+                                receiveDelayMs,
+                                () => {
+                                    foreach (var playerInput in allPlayerInput.playerInputs.Values)
+                                        LockstepPlayerInputSync.AddPending(playerInput.frame, playerInput.clientId, playerInput.dx, playerInput.dy);
+                                    LockstepWorldManager.Instance.SetServerFrame(allPlayerInput.frame);
+                                });
+                        }
+                        else
+                        {
+                            foreach (var playerInput in allPlayerInput.playerInputs.Values)
+                                LockstepPlayerInputSync.AddPending(playerInput.frame, playerInput.clientId, playerInput.dx, playerInput.dy);
+                            LockstepWorldManager.Instance.SetServerFrame(allPlayerInput.frame);
+                        }
+
+                    }
+                    catch (System.Exception e)
+                    {
+                        Logger.LogWarning("PlayerWorldSpawner AllPlayerInput 解析失败: " + e.Message);
+                    }
+                    break;
             }
         }
     }

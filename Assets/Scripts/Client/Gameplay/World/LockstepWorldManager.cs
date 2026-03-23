@@ -28,6 +28,7 @@ namespace SyncSample.Client.Gameplay
         private SortedList<int, List<ILogicEntity>> _logicEntities = new SortedList<int, List<ILogicEntity>>();
 
         private long _currentFrame;
+        private long _serverFrame;
 
         /// <summary> 当前世界帧号，每执行一次 FixedUpdate 递增 1。 </summary>
         public long CurrentFrame => _currentFrame;
@@ -46,23 +47,37 @@ namespace SyncSample.Client.Gameplay
         public void OnUpdate(float deltaTime)
         {
             if (!LockstepPlayerInputSync.AllClientsConnected()) return;
-
-            if (!_isWaitingForAllClients) // 如果在等待所有客户端输入，则不累积时间
-                _accumulatedTime += deltaTime;
-
-            // 接收延迟在 LockstepMessageHandlers 中延迟入队，不拉长本地逻辑帧间隔（否则会错误改变帧率）
-            while (_accumulatedTime >= LogicFixedDeltaTime)
+            
+            if (GlobalSwitch.Instance.OptimisticLockstep) // 乐观锁步
             {
-                if (!LockstepPlayerInputSync.HasAllInputsForFrame(_currentFrame))
+                if (_serverFrame > _currentFrame)
                 {
-                    _isWaitingForAllClients = true;
-                    return;
+                    for (long frame = _currentFrame; frame < _serverFrame; frame++)
+                    {
+                        LockstepPlayerInputSync.ApplyFrame(frame);
+                        AdvanceFrame();
+                    }
                 }
-                _isWaitingForAllClients = false;
-                _accumulatedTime -= LogicFixedDeltaTime;
-                LockstepPlayerInputSync.ApplyFrame(_currentFrame);
-                // 2. 推进帧
-                AdvanceFrame();
+            }
+            else // 原始锁步
+            {
+                if (!_isWaitingForAllClients) // 如果在等待所有客户端输入，则不累积时间
+                    _accumulatedTime += deltaTime;
+
+                // 接收延迟在 LockstepMessageHandlers 中延迟入队，不拉长本地逻辑帧间隔（否则会错误改变帧率）
+                while (_accumulatedTime >= LogicFixedDeltaTime)
+                {
+                    if (!LockstepPlayerInputSync.HasAllInputsForFrame(_currentFrame))
+                    {
+                        _isWaitingForAllClients = true;
+                        return;
+                    }
+                    _isWaitingForAllClients = false;
+                    _accumulatedTime -= LogicFixedDeltaTime;
+                    LockstepPlayerInputSync.ApplyFrame(_currentFrame);
+                    // 2. 推进帧
+                    AdvanceFrame();
+                }
             }
         }
 
@@ -88,6 +103,11 @@ namespace SyncSample.Client.Gameplay
             {
                 list.Remove(entity);
             }
+        }
+
+        public void SetServerFrame(long serverFrame)
+        {
+            _serverFrame = serverFrame;
         }
 
         /// <summary> 推进一帧。子类可重写以在推进前/后插入逻辑。 </summary>
