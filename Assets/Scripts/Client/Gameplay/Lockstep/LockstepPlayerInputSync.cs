@@ -9,6 +9,7 @@ namespace SyncSample.Client.Gameplay
     /// </summary>
     public static class LockstepPlayerInputSync
     {
+        private static readonly SortedList<long, AllPlayerInputMessage> PendingMessages = new SortedList<long, AllPlayerInputMessage>();
         private static readonly List<PlayerInputEntry> Pending = new List<PlayerInputEntry>();
         private static readonly HashSet<string> AllClientIds = new HashSet<string>();
         private static readonly object ExpectedLock = new object();
@@ -17,15 +18,6 @@ namespace SyncSample.Client.Gameplay
         public static bool AllClientsConnected()
         {
             return AllClientIds.Count == _expectedClientCount;
-        }
-
-        /// <summary> dx, dy 为协议中的定点数，应用时再转为浮点。 </summary>
-        public static void AddPending(long frame, string clientId, FixedPoint dx, FixedPoint dy)
-        {
-            lock (Pending)
-            {
-                Pending.Add(new PlayerInputEntry(frame, clientId, dx, dy));
-            }
         }
 
         /// <summary> 设置 lockstep 期望的客户端集合（收到 ClientList 时调用）。 </summary>
@@ -59,6 +51,47 @@ namespace SyncSample.Client.Gameplay
         public static void SetExpectedClientCount(int count)
         {
             _expectedClientCount = count > 0 ? count : 0;
+        }
+
+#region 乐观锁步
+        public static void AddPendingMessage(AllPlayerInputMessage message)
+        {
+            if (message == null) return;
+            lock (PendingMessages)
+            {
+                PendingMessages.Add(message.frame, message);
+            }
+        }
+
+        public static bool TryGetFrameMessage(long frame, out AllPlayerInputMessage message)
+        {
+            lock (PendingMessages)
+            {
+                if (PendingMessages.TryGetValue(frame, out message))
+                    return true;
+                return false;
+            }
+        }
+
+        public static void ApplyFrameMessage(AllPlayerInputMessage message)
+        {
+            if (message == null) return;
+            if (message.playerInputs != null)
+            {
+                foreach (var e in message.playerInputs)
+                    CharacterManager.Instance.ReceiveInput(e.clientId, e.frame, e.dx, e.dy);
+            }
+        }
+#endregion
+
+#region 原始锁步
+        /// <summary> dx, dy 为协议中的定点数，应用时再转为浮点。 </summary>
+        public static void AddPending(long frame, string clientId, FixedPoint dx, FixedPoint dy)
+        {
+            lock (Pending)
+            {
+                Pending.Add(new PlayerInputEntry(frame, clientId, dx, dy));
+            }
         }
 
         /// <summary> 本帧是否已收齐输入：若设置了期待数量则按数量判断，否则按期望客户端 ID 集合判断；均未设置时返回 true。 </summary>
@@ -116,6 +149,7 @@ namespace SyncSample.Client.Gameplay
             foreach (var e in toApply)
                 CharacterManager.Instance.ReceiveInput(e.clientId, e.frame, e.dx, e.dy);
         }
+#endregion
 
         private struct PlayerInputEntry
         {

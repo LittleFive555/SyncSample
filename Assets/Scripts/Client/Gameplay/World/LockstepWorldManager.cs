@@ -28,7 +28,6 @@ namespace SyncSample.Client.Gameplay
         private SortedList<int, List<ILogicEntity>> _logicEntities = new SortedList<int, List<ILogicEntity>>();
 
         private long _currentFrame;
-        private long _serverFrame;
 
         /// <summary> 当前世界帧号，每执行一次 FixedUpdate 递增 1。 </summary>
         public long CurrentFrame => _currentFrame;
@@ -50,14 +49,10 @@ namespace SyncSample.Client.Gameplay
             
             if (GlobalSwitch.Instance.OptimisticLockstep) // 乐观锁步
             {
-                if (_serverFrame > _currentFrame)
-                {
-                    for (long frame = _currentFrame; frame < _serverFrame; frame++)
-                    {
-                        LockstepPlayerInputSync.ApplyFrame(frame);
-                        AdvanceFrame();
-                    }
-                }
+                if (!LockstepPlayerInputSync.TryGetFrameMessage(_currentFrame + 1, out AllPlayerInputMessage message))
+                    return;
+                LockstepPlayerInputSync.ApplyFrameMessage(message);
+                AdvanceFrame();
             }
             else // 原始锁步
             {
@@ -103,11 +98,6 @@ namespace SyncSample.Client.Gameplay
             {
                 list.Remove(entity);
             }
-        }
-
-        public void SetServerFrame(long serverFrame)
-        {
-            _serverFrame = serverFrame;
         }
 
         /// <summary> 推进一帧。子类可重写以在推进前/后插入逻辑。 </summary>

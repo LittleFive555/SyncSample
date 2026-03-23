@@ -78,23 +78,11 @@ namespace SyncSample.Client.Gameplay
                         {
                             GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(
                                 receiveDelayMs,
-                                () => {
-                                    if (allPlayerInput.playerInputs != null)
-                                    {
-                                        foreach (var playerInput in allPlayerInput.playerInputs)
-                                            LockstepPlayerInputSync.AddPending(playerInput.frame, playerInput.clientId, playerInput.dx, playerInput.dy);
-                                    }
-                                    LockstepWorldManager.Instance.SetServerFrame(allPlayerInput.frame);
-                                });
+                                () => { LockstepPlayerInputSync.AddPendingMessage(allPlayerInput); });
                         }
                         else
                         {
-                            if (allPlayerInput.playerInputs != null)
-                            {
-                                foreach (var playerInput in allPlayerInput.playerInputs)
-                                    LockstepPlayerInputSync.AddPending(playerInput.frame, playerInput.clientId, playerInput.dx, playerInput.dy);
-                            }
-                            LockstepWorldManager.Instance.SetServerFrame(allPlayerInput.frame);
+                            LockstepPlayerInputSync.AddPendingMessage(allPlayerInput);
                         }
 
                     }
