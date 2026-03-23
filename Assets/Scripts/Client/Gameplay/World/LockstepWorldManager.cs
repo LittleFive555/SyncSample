@@ -67,14 +67,14 @@ namespace SyncSample.Client.Gameplay
                 // 接收延迟在 LockstepMessageHandlers 中延迟入队，不拉长本地逻辑帧间隔（否则会错误改变帧率）
                 while (_accumulatedTime >= LogicFixedDeltaTime)
                 {
-                    if (!LockstepPlayerInputSync.HasAllInputsForFrame(_currentFrame))
+                    if (!LockstepPlayerInputSync.HasAllInputsForFrame(_currentFrame + 1))
                     {
                         _isWaitingForAllClients = true;
                         return;
                     }
                     _isWaitingForAllClients = false;
                     _accumulatedTime -= LogicFixedDeltaTime;
-                    LockstepPlayerInputSync.ApplyFrame(_currentFrame);
+                    LockstepPlayerInputSync.ApplyFrame(_currentFrame + 1);
                     // 2. 推进帧
                     AdvanceFrame();
                 }
