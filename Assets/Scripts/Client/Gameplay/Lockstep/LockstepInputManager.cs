@@ -34,7 +34,7 @@ namespace SyncSample.Client.Gameplay
         {
             if (!LockstepPlayerInputSync.AllClientsConnected()) return;
 
-            long currentFrame = LockstepWorldManager.Instance.CurrentFrame;
+            long currentFrame = LockstepWorldManager.Instance.CurrentFrame + 1;
             if (currentFrame <= _lastSentFrame)
                 return;
 

@@ -81,7 +81,7 @@ namespace SyncSample.Client.Gameplay
                                 () => {
                                     if (allPlayerInput.playerInputs != null)
                                     {
-                                        foreach (var playerInput in allPlayerInput.playerInputs.Values)
+                                        foreach (var playerInput in allPlayerInput.playerInputs)
                                             LockstepPlayerInputSync.AddPending(playerInput.frame, playerInput.clientId, playerInput.dx, playerInput.dy);
                                     }
                                     LockstepWorldManager.Instance.SetServerFrame(allPlayerInput.frame);
@@ -91,7 +91,7 @@ namespace SyncSample.Client.Gameplay
                         {
                             if (allPlayerInput.playerInputs != null)
                             {
-                                foreach (var playerInput in allPlayerInput.playerInputs.Values)
+                                foreach (var playerInput in allPlayerInput.playerInputs)
                                     LockstepPlayerInputSync.AddPending(playerInput.frame, playerInput.clientId, playerInput.dx, playerInput.dy);
                             }
                             LockstepWorldManager.Instance.SetServerFrame(allPlayerInput.frame);

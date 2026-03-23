@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using SyncSample.Common;
 using UnityEngine;
@@ -37,7 +38,10 @@ namespace SyncSample.Server.Gameplay
         public void AppendPlayerInput(string clientId, PlayerInputMessage input)
         {
             if (input.frame != _currentFrame) // NOTE 简单处理，非本帧数据直接丢弃
+            {
+                Logger.LogWarning("Skip input: clientId=" + clientId + " frame " + input.frame + " " + _currentFrame);
                 return;
+            }
 
             lock (_playerInputs)
             {
@@ -47,7 +51,7 @@ namespace SyncSample.Server.Gameplay
 
         private void Update(long frame, float deltaTime)
         {
-            var allPlayerInputMessage = new AllPlayerInputMessage(frame, _playerInputs);
+            var allPlayerInputMessage = new AllPlayerInputMessage(frame, _playerInputs.Values.ToList());
             _server.Broadcast(MessageType.AllPlayerInput, JsonUtility.ToJson(allPlayerInputMessage));
             _playerInputs.Clear();
         }
