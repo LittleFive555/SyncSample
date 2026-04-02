@@ -407,8 +407,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 593872104}
-  - component: {fileID: 593872105}
   - component: {fileID: 593872103}
+  - component: {fileID: 593872105}
   - component: {fileID: 593872107}
   - component: {fileID: 593872106}
   m_Layer: 0
@@ -475,6 +475,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f201e076c2ec1c64e823e71ac2de7b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FrameDeltaTime: 0.05
+  DelayApplyFrameCount: 3
 --- !u!114 &593872107
 MonoBehaviour:
   m_ObjectHideFlags: 0
