@@ -15,7 +15,7 @@ namespace SyncSample.Server
                 return;
 
             _initialized = true;
-            if (GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
                 _syncMessageHandler = new LockstepMessageHandlers();
             else
                 _syncMessageHandler = new StateSyncMessageHandlers();

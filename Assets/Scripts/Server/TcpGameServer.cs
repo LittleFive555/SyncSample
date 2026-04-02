@@ -42,7 +42,7 @@ namespace SyncSample.Server
         {
             if (_running) return;
             _running = true;
-            if (!GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.SyncMode == SyncMode.StateSync)
                 StateSyncWorldManager.Instance.Start(this);
 
             _listener = new TcpListener(IPAddress.Any, _port);

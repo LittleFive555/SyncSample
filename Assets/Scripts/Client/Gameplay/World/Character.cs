@@ -42,7 +42,7 @@ namespace SyncSample.Client.Gameplay
             Name = name;
             SetLogicPosition(x, y);
             UIInfo.Instance.RegisterPos(this);
-            if (GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
                 LockstepWorldManager.Instance.RegisterLogicEntity(this);
         }
 
@@ -60,7 +60,7 @@ namespace SyncSample.Client.Gameplay
         private void OnDestroy()
         {
             UIInfo.Instance.UnregisterPos(this);
-            if (GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
                 LockstepWorldManager.Instance.UnregisterLogicEntity(this);
         }
 

@@ -63,7 +63,7 @@ namespace SyncSample.Client
             // 初始化单例
             GameLooper = new GameObject("GameLooper").AddComponent<GameLooper>();
             GameLooper.transform.SetParent(transform);
-            if (GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
             {
                 LockstepInputManager.Initialize();
                 LockstepWorldManager.Instance.Initialize();
@@ -89,7 +89,7 @@ namespace SyncSample.Client
             Client.OnConnected += OnConnected;
             Client.OnDisconnected += OnDisconnected;
             Client.OnMessageReceived += OnMessageReceived;
-            if (GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
                 Client.OnMessageReceived += LockstepMessageHandlers.OnMessageReceived;
             else
                 Client.OnMessageReceived += SyncStateMessageHandlers.OnMessageReceived;
@@ -101,7 +101,7 @@ namespace SyncSample.Client
             Client.OnConnected -= OnConnected;
             Client.OnDisconnected -= OnDisconnected;
             Client.OnMessageReceived -= OnMessageReceived;
-            if (GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
                 Client.OnMessageReceived -= LockstepMessageHandlers.OnMessageReceived;
             else
                 Client.OnMessageReceived -= SyncStateMessageHandlers.OnMessageReceived;
@@ -118,7 +118,7 @@ namespace SyncSample.Client
         {
             Logger.Log("已断开");
 
-            if (!GlobalSwitch.Instance.UseLockstep)
+            if (GlobalSwitch.Instance.SyncMode == SyncMode.StateSync)
                 SyncStateWorldManager.Instance.ResetSession();
         }
 
