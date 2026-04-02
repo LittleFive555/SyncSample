@@ -20,14 +20,9 @@ namespace SyncSample.Server.Gameplay
             }
         }
 
-        private float _frameTime = 0.05f; // 20 逻辑帧/秒，每帧逻辑时长（秒）
         /// <summary>已推进的逻辑时间（毫秒），约等于 World 时间轴 </summary>
         private long _currentFrame;
         private long _accumulatedLogicTimeMs;
-        /// <summary>
-        /// 延迟应用帧数
-        /// </summary>
-        private int _delayApplyFrameCount = 3;
         private Thread _updateThread;
 
         private SortedList<long, List<PlayerInputMessage>> _playerInputs = new SortedList<long, List<PlayerInputMessage>>();
@@ -146,7 +141,7 @@ namespace SyncSample.Server.Gameplay
         /// </summary>
         private void UpdateLoop()
         {
-            long frameTicks = (long)(_frameTime * Stopwatch.Frequency);
+            long frameTicks = (long)(GlobalSwitch.Instance.StateSyncSwitch.FrameDeltaTime * Stopwatch.Frequency);
             long nextFrameTick = Stopwatch.GetTimestamp();
 
             while (true)
@@ -155,12 +150,12 @@ namespace SyncSample.Server.Gameplay
 
                 while (now >= nextFrameTick)
                 {
-                    if (_currentFrame > _delayApplyFrameCount)
+                    if (_currentFrame > GlobalSwitch.Instance.StateSyncSwitch.DelayApplyFrameCount)
                     {
-                        Update(_currentFrame - _delayApplyFrameCount, _frameTime);
+                        Update(_currentFrame - GlobalSwitch.Instance.StateSyncSwitch.DelayApplyFrameCount, GlobalSwitch.Instance.StateSyncSwitch.FrameDeltaTime);
                     }
                     _currentFrame++;
-                    _accumulatedLogicTimeMs += (long)(_frameTime * 1000);
+                    _accumulatedLogicTimeMs += (long)(GlobalSwitch.Instance.StateSyncSwitch.FrameDeltaTime * 1000);
                     nextFrameTick += frameTicks;
                     now = Stopwatch.GetTimestamp();
                 }

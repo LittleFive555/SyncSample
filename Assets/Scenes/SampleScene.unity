@@ -409,6 +409,8 @@ GameObject:
   - component: {fileID: 593872104}
   - component: {fileID: 593872105}
   - component: {fileID: 593872103}
+  - component: {fileID: 593872107}
+  - component: {fileID: 593872106}
   m_Layer: 0
   m_Name: GameMain
   m_TagString: Untagged
@@ -458,13 +460,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96645c956937bc4295d4e1ff1fbfe33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UseLockstep: 1
+  UseLockstep: 0
   AddSendDelay: 0
   AddReceiveDelay: 0
+--- !u!114 &593872106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593872102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f201e076c2ec1c64e823e71ac2de7b5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &593872107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593872102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6fa1a7f5343a2a488ca6a8759c3235d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   ExpectedClientCount: 2
-  LogicFixedDeltaTime: 0.033333
-  LockstepInterpolation: 0
-  OptimisticLockstep: 0
+  LogicDeltaTime: 0.03333333
+  Interpolation: 0
+  Optimistic: 0
 --- !u!1 &749097568
 GameObject:
   m_ObjectHideFlags: 0

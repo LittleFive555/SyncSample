@@ -22,14 +22,25 @@ namespace SyncSample.Common
         [SerializeField, Header("添加接收延迟(ms)")]
         public int AddReceiveDelay = 0;
 
-        [Header("锁步同步：")]
-        [SerializeField, Header("预期客户端数量")]
-        public int ExpectedClientCount = 2;
-        [SerializeField, Header("逻辑帧间隔(s)")]
-        public float LogicFixedDeltaTime = 0.03333333f;
-        [SerializeField, Header("是否启用插值")]
-        public bool LockstepInterpolation = false;
-        [SerializeField, Header("是否启用乐观锁步")]
-        public bool OptimisticLockstep = false;
+        private LockstepSwitch _lockstepSwitch;
+        public LockstepSwitch LockstepSwitch 
+        {
+            get
+            {
+                if (_lockstepSwitch == null)
+                    _lockstepSwitch = GetComponent<LockstepSwitch>();
+                return _lockstepSwitch;
+            }
+        }
+        private StateSyncSwitch _stateSyncSwitch;
+        public StateSyncSwitch StateSyncSwitch
+        {
+            get
+            {
+                if (_stateSyncSwitch == null)
+                    _stateSyncSwitch = GetComponent<StateSyncSwitch>();
+                return _stateSyncSwitch;
+            }
+        }
     }
 }

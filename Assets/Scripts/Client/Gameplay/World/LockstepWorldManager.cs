@@ -36,7 +36,7 @@ namespace SyncSample.Client.Gameplay
         private bool _isWaitingForAllClients;
         public bool IsBlockedForSyncing => _isWaitingForAllClients;
 
-        public float LogicFixedDeltaTime => GlobalSwitch.Instance.LogicFixedDeltaTime;
+        public float LogicFixedDeltaTime => GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime;
 
         public void Initialize()
         {
@@ -47,7 +47,7 @@ namespace SyncSample.Client.Gameplay
         {
             if (!LockstepPlayerInputSync.AllClientsConnected()) return;
             
-            if (GlobalSwitch.Instance.OptimisticLockstep) // 乐观锁步
+            if (GlobalSwitch.Instance.LockstepSwitch.Optimistic) // 乐观锁步
             {
                 if (!LockstepPlayerInputSync.TryGetFrameMessage(_currentFrame + 1, out AllPlayerInputMessage message))
                     return;

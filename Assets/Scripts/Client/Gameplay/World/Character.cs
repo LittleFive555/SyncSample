@@ -48,7 +48,7 @@ namespace SyncSample.Client.Gameplay
 
         private void Update()
         {
-            if (GlobalSwitch.Instance.LockstepInterpolation)
+            if (GlobalSwitch.Instance.LockstepSwitch.Interpolation)
             {
                 // 为了简单处理，逻辑和显示上，都将X和Y分开处理
                 Vector3 onlyX = Vector3.MoveTowards(displayRoot.localPosition, new Vector3(LogicX, displayRoot.localPosition.y, 0), moveSpeed * Time.deltaTime);
@@ -73,9 +73,9 @@ namespace SyncSample.Client.Gameplay
         /// <summary> 应用位移：先以定点数加到逻辑，再同步到显示（显示用浮点）。 </summary>
         public void ApplyMovement(float dx, float dy)
         {
-            _logicX = FixedPoint.FromFloat(_logicX.ToFloat() + dx * moveSpeed * GlobalSwitch.Instance.LogicFixedDeltaTime);
-            _logicY = FixedPoint.FromFloat(_logicY.ToFloat() + dy * moveSpeed * GlobalSwitch.Instance.LogicFixedDeltaTime);
-            if (!GlobalSwitch.Instance.LockstepInterpolation)
+            _logicX = FixedPoint.FromFloat(_logicX.ToFloat() + dx * moveSpeed * GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime);
+            _logicY = FixedPoint.FromFloat(_logicY.ToFloat() + dy * moveSpeed * GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime);
+            if (!GlobalSwitch.Instance.LockstepSwitch.Interpolation)
                 SyncDisplayFromLogic();
         }
 

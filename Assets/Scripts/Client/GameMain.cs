@@ -68,7 +68,7 @@ namespace SyncSample.Client
                 LockstepInputManager.Initialize();
                 LockstepWorldManager.Instance.Initialize();
                 GameLooper.Updater.Register(LockstepWorldManager.Instance);
-                LockstepPlayerInputSync.SetExpectedClientCount(GlobalSwitch.Instance.ExpectedClientCount);
+                LockstepPlayerInputSync.SetExpectedClientCount(GlobalSwitch.Instance.LockstepSwitch.ExpectedClientCount);
             }
             else
             {

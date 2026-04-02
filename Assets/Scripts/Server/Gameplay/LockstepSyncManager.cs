@@ -62,7 +62,7 @@ namespace SyncSample.Server.Gameplay
         /// </summary>
         private void UpdateLoop()
         {
-            long frameTicks = (long)(GlobalSwitch.Instance.LogicFixedDeltaTime * Stopwatch.Frequency);
+            long frameTicks = (long)(GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime * Stopwatch.Frequency);
             long nextFrameTick = Stopwatch.GetTimestamp();
 
             while (true)
@@ -71,9 +71,9 @@ namespace SyncSample.Server.Gameplay
 
                 while (now >= nextFrameTick)
                 {
-                    Update(_currentFrame, GlobalSwitch.Instance.LogicFixedDeltaTime);
+                    Update(_currentFrame, GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime);
                     _currentFrame++;
-                    _accumulatedLogicTimeMs += (long)(GlobalSwitch.Instance.LogicFixedDeltaTime * 1000);
+                    _accumulatedLogicTimeMs += (long)(GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime * 1000);
                     nextFrameTick += frameTicks;
                     now = Stopwatch.GetTimestamp();
                 }

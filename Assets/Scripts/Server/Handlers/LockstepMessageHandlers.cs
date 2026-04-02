@@ -36,7 +36,7 @@ namespace SyncSample.Server
                 server.BroadcastExcept(session, MessageType.ClientJoined, joinedPayload);
 
                 // NOTE 乐观锁步：当预期客户端数量达到时，启动锁步同步
-                if (GlobalSwitch.Instance.OptimisticLockstep && sessions.Length == GlobalSwitch.Instance.ExpectedClientCount)
+                if (GlobalSwitch.Instance.LockstepSwitch.Optimistic && sessions.Length == GlobalSwitch.Instance.LockstepSwitch.ExpectedClientCount)
                     LockstepSyncManager.Instance.Start(server);
             }
             catch (Exception e)
@@ -51,7 +51,7 @@ namespace SyncSample.Server
             {
                 var input = JsonUtility.FromJson<PlayerInputMessage>(payload);
                 input.clientId = session.Id;
-                if (GlobalSwitch.Instance.OptimisticLockstep)
+                if (GlobalSwitch.Instance.LockstepSwitch.Optimistic)
                     LockstepSyncManager.Instance.AppendPlayerInput(session.Id, input);
                 else
                     server.Broadcast(MessageType.PlayerInput, JsonUtility.ToJson(input));
