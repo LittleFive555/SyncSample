@@ -460,9 +460,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96645c956937bc4295d4e1ff1fbfe33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UseLockstep: 0
+  SyncMode: 1
   AddSendDelay: 0
   AddReceiveDelay: 0
+  _lockstepSwitch: {fileID: 593872107}
+  _stateSyncSwitch: {fileID: 593872106}
 --- !u!114 &593872106
 MonoBehaviour:
   m_ObjectHideFlags: 0

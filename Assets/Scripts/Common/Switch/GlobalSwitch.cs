@@ -28,25 +28,13 @@ namespace SyncSample.Common
         [SerializeField, Header("添加接收延迟(ms)")]
         public int AddReceiveDelay = 0;
 
+        [Header("绑定")]
+        [SerializeField]
         private LockstepSwitch _lockstepSwitch;
-        public LockstepSwitch LockstepSwitch 
-        {
-            get
-            {
-                if (_lockstepSwitch == null)
-                    _lockstepSwitch = GetComponent<LockstepSwitch>();
-                return _lockstepSwitch;
-            }
-        }
+        public LockstepSwitch LockstepSwitch => _lockstepSwitch;
+
+        [SerializeField]
         private StateSyncSwitch _stateSyncSwitch;
-        public StateSyncSwitch StateSyncSwitch
-        {
-            get
-            {
-                if (_stateSyncSwitch == null)
-                    _stateSyncSwitch = GetComponent<StateSyncSwitch>();
-                return _stateSyncSwitch;
-            }
-        }
+        public StateSyncSwitch StateSyncSwitch => _stateSyncSwitch;
     }
 }
