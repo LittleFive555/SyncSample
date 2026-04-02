@@ -74,7 +74,7 @@ namespace SyncSample.Client.Gameplay
                     {
                         var allPlayerInput = JsonUtility.FromJson<AllPlayerInputMessage>(envelope.payload);
                         int receiveDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddReceiveDelay : 0;
-                        if (receiveDelayMs > 0)
+                        if (receiveDelayMs > 0) // 延迟模拟
                         {
                             GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(
                                 receiveDelayMs,

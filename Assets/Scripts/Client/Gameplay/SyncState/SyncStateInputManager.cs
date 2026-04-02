@@ -70,7 +70,7 @@ namespace SyncSample.Client.Gameplay
 
             string json = JsonUtility.ToJson(msg);
             int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
-            if (sendDelayMs > 0)
+            if (sendDelayMs > 0) // 延迟模拟
             {
                 var c = GameMain.Instance.Client;
                 GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(sendDelayMs, () =>

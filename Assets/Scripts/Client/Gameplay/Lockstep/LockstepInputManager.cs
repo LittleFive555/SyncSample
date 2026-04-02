@@ -34,6 +34,8 @@ namespace SyncSample.Client.Gameplay
         {
             if (!LockstepPlayerInputSync.AllClientsConnected()) return;
 
+            // 简化处理，一帧只能发送一个操作
+            // 如果帧时间较长，或者操作较快，可以考虑每帧打包发送多个操作、或者每次有操作时立即发送
             long currentFrame = LockstepWorldManager.Instance.CurrentFrame + 1;
             if (currentFrame <= _lastSentFrame)
                 return;
@@ -42,7 +44,7 @@ namespace SyncSample.Client.Gameplay
             var msg = new PlayerInputMessage(currentFrame, FixedPoint.FromFloat(_dx), FixedPoint.FromFloat(_dy));
             string json = JsonUtility.ToJson(msg);
             int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
-            if (sendDelayMs > 0)
+            if (sendDelayMs > 0) // 延迟模拟
             {
                 var c = GameMain.Instance.Client;
                 GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(sendDelayMs, () =>
