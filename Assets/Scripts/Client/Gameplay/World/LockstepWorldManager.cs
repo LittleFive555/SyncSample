@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SyncSample.Common;
+using UnityEngine;
 
 namespace SyncSample.Client.Gameplay
 {
@@ -46,6 +47,9 @@ namespace SyncSample.Client.Gameplay
         public void OnUpdate(float deltaTime)
         {
             if (!LockstepPlayerInputSync.AllClientsConnected()) return;
+
+            // 可能需要规定一个时间，比如在一帧内的百分之多少来发操作
+            SendInput();
             
             if (GlobalSwitch.Instance.LockstepSwitch.Optimistic) // 乐观锁步
             {
@@ -111,6 +115,33 @@ namespace SyncSample.Client.Gameplay
                 }
             }
             _currentFrame++;
+        }
+
+        private long _lastSentFrame = -1;
+        private void SendInput()
+        {
+            // 简化处理，一帧只能发送一个操作
+            // 如果帧时间较长，或者操作较快，可以考虑每帧打包发送多个操作、或者每次有操作时立即发送
+            long currentFrame = CurrentFrame + 1;
+            if (currentFrame <= _lastSentFrame)
+                return;
+
+            _lastSentFrame = currentFrame;
+            LockstepInputManager.Instance.GetInput(out float dx, out float dy);
+            var msg = new PlayerInputMessage(currentFrame, FixedPoint.FromFloat(dx), FixedPoint.FromFloat(dy));
+            string json = JsonUtility.ToJson(msg);
+            int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
+            if (sendDelayMs > 0) // 延迟模拟
+            {
+                var c = GameMain.Instance.Client;
+                GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(sendDelayMs, () =>
+                {
+                    if (c != null && c.IsConnected)
+                        c.Send(MessageType.PlayerInput, json);
+                });
+            }
+            else
+                GameMain.Instance.Client.Send(MessageType.PlayerInput, json);
         }
     }
 }
