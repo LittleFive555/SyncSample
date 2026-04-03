@@ -1,15 +1,10 @@
 using System.Collections.Generic;
+using SyncSample.Client.Gameplay.World.Logic;
 using SyncSample.Common;
 using UnityEngine;
 
 namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
 {
-    public interface ILogicEntity
-    {
-        int Priority { get; }
-        void OnLogicFrame(long frame);
-    }
-    
     /// <summary>
     /// 基于 FixedUpdate 的帧更新器。内部使用独立的 UpdateDispatcher 驱动本帧逻辑下的模块（如 PlayerInputSender），与 GameMain 的 Dispatcher 分离。
     /// </summary>
@@ -26,7 +21,7 @@ namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
             }
         }
 
-        private SortedList<int, List<ILogicEntity>> _logicEntities = new SortedList<int, List<ILogicEntity>>();
+        private SortedList<int, List<ILogicUpdate>> _logicEntities = new SortedList<int, List<ILogicUpdate>>();
 
         private long _currentFrame;
 
@@ -80,7 +75,7 @@ namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
             }
         }
 
-        public void RegisterLogicEntity(ILogicEntity entity)
+        public void RegisterLogicEntity(ILogicUpdate entity)
         {
             if (_logicEntities.TryGetValue(entity.Priority, out var list))
             {
@@ -91,12 +86,12 @@ namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
             }
             else
             {
-                list = new List<ILogicEntity>() { entity };
+                list = new List<ILogicUpdate>() { entity };
                 _logicEntities.Add(entity.Priority, list);
             }
         }
 
-        public void UnregisterLogicEntity(ILogicEntity entity)
+        public void UnregisterLogicEntity(ILogicUpdate entity)
         {
             if (_logicEntities.TryGetValue(entity.Priority, out var list) && list.Contains(entity))
             {

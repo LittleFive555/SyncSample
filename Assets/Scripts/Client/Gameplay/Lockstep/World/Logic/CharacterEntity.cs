@@ -3,7 +3,7 @@ using SyncSample.Common;
 
 namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
 {
-    public class CharacterEntity : ILogicEntity, ICharacterEntity
+    public class CharacterEntity : ILogicUpdate, ICharacterEntity
     {
         public string Id { get; private set; }
         public string Name { get; private set; }

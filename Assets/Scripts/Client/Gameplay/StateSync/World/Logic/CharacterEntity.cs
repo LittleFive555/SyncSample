@@ -1,4 +1,5 @@
 using SyncSample.Client.Gameplay.World.Logic;
+using SyncSample.Common;
 
 namespace SyncSample.Client.Gameplay.StateSync.World.Logic
 {
@@ -25,8 +26,17 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
 
         public void ReceiveInput(long frame, float dx, float dy)
         {
+            if (!IsLocal)
+                return;
+
             DeltaX = dx;
             DeltaY = dy;
+            
+            if (GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
+            {
+                X += DeltaX * MoveSpeed * SyncStateWorldManager.Instance.FrameDeltaTime;
+                Y += DeltaY * MoveSpeed * SyncStateWorldManager.Instance.FrameDeltaTime;
+            }
         }
 
         public void ReceiveWorldState(float x, float y, float dx, float dy)
@@ -35,13 +45,6 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
             Y = y;
             DeltaX = dx;
             DeltaY = dy;
-        }
-
-        /// <summary> 应用位移：先以定点数加到逻辑，再同步到显示（显示用浮点）。 </summary>
-        private void ApplyMovement(float dx, float dy)
-        {
-            X += dx * MoveSpeed * SyncStateWorldManager.Instance.FrameDeltaTime;
-            Y += dy * MoveSpeed * SyncStateWorldManager.Instance.FrameDeltaTime;
         }
     }
 }
