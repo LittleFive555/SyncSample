@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using SyncSample.Client.Gameplay.Lockstep.World.Logic;
 using SyncSample.Common;
 using UnityEngine;
 
-namespace SyncSample.Client.Gameplay
+namespace SyncSample.Client.Gameplay.Lockstep
 {
     public class LockstepMessageHandlers
     {
@@ -21,7 +22,7 @@ namespace SyncSample.Client.Gameplay
                             var ids = new List<string>(list.clients.Length);
                             foreach (var c in list.clients)
                             {
-                                CharacterManager.Instance.EnsurePlayer(c.id, c.name);
+                                var characterEntity = CharacterManager.Instance.EnsurePlayer(c.id, c.name);
                                 if (!string.IsNullOrEmpty(c.id)) ids.Add(c.id);
                             }
                             LockstepPlayerInputSync.SetClients(ids);
@@ -36,7 +37,7 @@ namespace SyncSample.Client.Gameplay
                     try
                     {
                         var info = JsonUtility.FromJson<ClientInfo>(envelope.payload);
-                        CharacterManager.Instance.EnsurePlayer(info.id, info.name);
+                        var characterEntity = CharacterManager.Instance.EnsurePlayer(info.id, info.name);
                         LockstepPlayerInputSync.AddClient(info.id);
                     }
                     catch (System.Exception e)

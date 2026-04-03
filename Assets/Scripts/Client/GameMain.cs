@@ -1,8 +1,16 @@
 using System;
 using SyncSample.Client.Gameplay;
+using SyncSample.Client.Gameplay.Lockstep;
+using SyncSample.Client.Gameplay.Lockstep.World.Logic;
+using SyncSample.Client.Gameplay.StateSync;
+using SyncSample.Client.Gameplay.StateSync.World.Logic;
+using SyncSample.Client.Gameplay.World.View;
 using SyncSample.Client.UI;
 using SyncSample.Common;
 using UnityEngine;
+
+using LockstepCharacterManager = SyncSample.Client.Gameplay.Lockstep.World.Logic.CharacterManager;
+using SyncStateCharacterManager = SyncSample.Client.Gameplay.StateSync.World.Logic.CharacterManager;
 
 namespace SyncSample.Client
 {
@@ -63,17 +71,24 @@ namespace SyncSample.Client
             // 初始化单例
             GameLooper = new GameObject("GameLooper").AddComponent<GameLooper>();
             GameLooper.transform.SetParent(transform);
+            InputManager.Initialize();
             if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
             {
-                LockstepInputManager.Initialize();
                 LockstepWorldManager.Instance.Initialize();
+                
+                LockstepCharacterManager.Instance.OnPlayerCreated += CharacterSpawner.Instance.EnsurePlayer;
+                LockstepCharacterManager.Instance.OnPlayerRemoved += CharacterSpawner.Instance.RemovePlayer;
+
                 GameLooper.Updater.Register(LockstepWorldManager.Instance);
                 LockstepPlayerInputSync.SetExpectedClientCount(GlobalSwitch.Instance.LockstepSwitch.ExpectedClientCount);
             }
             else
             {
-                SyncStateInputManager.Initialize();
                 SyncStateWorldManager.Instance.Initialize();
+
+                SyncStateCharacterManager.Instance.OnPlayerCreated += CharacterSpawner.Instance.EnsurePlayer;
+                SyncStateCharacterManager.Instance.OnPlayerRemoved += CharacterSpawner.Instance.RemovePlayer;
+
                 GameLooper.Updater.Register(SyncStateWorldManager.Instance);
             }
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using SyncSample.Common;
 using UnityEngine;
 
-namespace SyncSample.Client.Gameplay
+namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
 {
     public interface ILogicEntity
     {
@@ -49,7 +49,7 @@ namespace SyncSample.Client.Gameplay
             if (!LockstepPlayerInputSync.AllClientsConnected()) return;
 
             // 可能需要规定一个时间，比如在一帧内的百分之多少来发操作
-            SendInput();
+            ProcessInput();
             
             if (GlobalSwitch.Instance.LockstepSwitch.Optimistic) // 乐观锁步
             {
@@ -118,7 +118,7 @@ namespace SyncSample.Client.Gameplay
         }
 
         private long _lastSentFrame = -1;
-        private void SendInput()
+        private void ProcessInput()
         {
             // 简化处理，一帧只能发送一个操作
             // 如果帧时间较长，或者操作较快，可以考虑每帧打包发送多个操作、或者每次有操作时立即发送
@@ -127,7 +127,7 @@ namespace SyncSample.Client.Gameplay
                 return;
 
             _lastSentFrame = currentFrame;
-            LockstepInputManager.Instance.GetInput(out float dx, out float dy);
+            InputManager.Instance.GetInput(out float dx, out float dy);
             var msg = new PlayerInputMessage(currentFrame, FixedPoint.FromFloat(dx), FixedPoint.FromFloat(dy));
             string json = JsonUtility.ToJson(msg);
             int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;

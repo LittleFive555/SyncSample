@@ -20,13 +20,13 @@ namespace SyncSample.Common
         /// <summary>
         /// 角色实体列表
         /// </summary>
-        public CharacterEntity[] characters;
+        public MsgCharacterEntity[] characters;
 
         public WorldStateMessage() { }
 
-        public WorldStateMessage(CharacterEntity[] characters)
+        public WorldStateMessage(MsgCharacterEntity[] characters)
         {
-            this.characters = characters ?? Array.Empty<CharacterEntity>();
+            this.characters = characters ?? Array.Empty<MsgCharacterEntity>();
         }
     }
 }

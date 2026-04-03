@@ -6,7 +6,7 @@ namespace SyncSample.Common.Model
     /// 角色实体（服务器权威状态）；字段名与 JsonUtility 序列化一致。
     /// </summary>
     [Serializable]
-    public class CharacterEntity
+    public class MsgCharacterEntity
     {
         public string id;
         public string name;

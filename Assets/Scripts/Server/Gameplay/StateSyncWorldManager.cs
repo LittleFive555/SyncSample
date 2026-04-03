@@ -26,7 +26,7 @@ namespace SyncSample.Server.Gameplay
         private Thread _updateThread;
 
         private SortedList<long, List<PlayerInputMessage>> _playerInputs = new SortedList<long, List<PlayerInputMessage>>();
-        private Dictionary<string, CharacterEntity> _characters = new Dictionary<string, CharacterEntity>();
+        private Dictionary<string, MsgCharacterEntity> _characters = new Dictionary<string, MsgCharacterEntity>();
         private TcpGameServer _server;
 
         public void Start(TcpGameServer server)
@@ -59,9 +59,9 @@ namespace SyncSample.Server.Gameplay
             _server.Broadcast(MessageType.WorldState, JsonUtility.ToJson(worldState));
         }
 
-        public CharacterEntity AddCharacter(string id, string name)
+        public MsgCharacterEntity AddCharacter(string id, string name)
         {
-            var character = new CharacterEntity
+            var character = new MsgCharacterEntity
             {
                 id = id,
                 name = name,
@@ -116,13 +116,13 @@ namespace SyncSample.Server.Gameplay
         }
 
         /// <summary> 构建当前世界快照（拷贝），用于 WorldState 协议。 </summary>
-        public CharacterEntity[] GetAllCharactersSnapshot()
+        public MsgCharacterEntity[] GetAllCharactersSnapshot()
         {
-            var arr = new CharacterEntity[_characters.Count];
+            var arr = new MsgCharacterEntity[_characters.Count];
             int i = 0;
             foreach (var c in _characters.Values)
             {
-                arr[i++] = new CharacterEntity
+                arr[i++] = new MsgCharacterEntity
                 {
                     id = c.id,
                     name = c.name,

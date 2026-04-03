@@ -27,6 +27,8 @@ namespace SyncSample.Common
         public int AddSendDelay = 0;
         [SerializeField, Header("添加接收延迟(ms)")]
         public int AddReceiveDelay = 0;
+        [SerializeField, Header("是否启用客户端插值")]
+        public bool ClientInterpolation = false;
 
         [Header("绑定")]
         [SerializeField]

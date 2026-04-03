@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SyncSample.Client;
-using UnityEngine;
 
 namespace SyncSample.Client.Gameplay
 {

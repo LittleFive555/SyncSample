@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+using SyncSample.Client.Gameplay.StateSync.World.Logic;
 using SyncSample.Common;
 using UnityEngine;
 
-namespace SyncSample.Client.Gameplay
+namespace SyncSample.Client.Gameplay.StateSync
 {
     public class SyncStateMessageHandlers
     {

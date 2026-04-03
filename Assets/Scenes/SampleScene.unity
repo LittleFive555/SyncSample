@@ -463,6 +463,7 @@ MonoBehaviour:
   SyncMode: 1
   AddSendDelay: 0
   AddReceiveDelay: 0
+  ClientInterpolation: 0
   _lockstepSwitch: {fileID: 593872107}
   _stateSyncSwitch: {fileID: 593872106}
 --- !u!114 &593872106
@@ -479,6 +480,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FrameDeltaTime: 0.05
   DelayApplyFrameCount: 3
+  ClientPrediction: 0
 --- !u!114 &593872107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,7 +495,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ExpectedClientCount: 2
   LogicDeltaTime: 0.03333333
-  Interpolation: 0
   Optimistic: 0
 --- !u!1 &749097568
 GameObject:
@@ -567,31 +568,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 771592293}
-  - component: {fileID: 771592292}
+  - component: {fileID: 771592294}
   m_Layer: 0
-  m_Name: CharacterManager
+  m_Name: CharacterSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &771592292
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 771592291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db3cdbe630e494b42b0d11094e78af24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerShape: 1
-  localPlayerColor: {r: 0.2, g: 0.6, b: 1, a: 1}
-  remotePlayerColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
-  spawnSpacing: 2
-  SelfId: 
 --- !u!4 &771592293
 Transform:
   m_ObjectHideFlags: 0
@@ -607,6 +591,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &771592294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771592291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa4697476697c264b873bf90caa754aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerShape: 1
+  localPlayerColor: {r: 0.2, g: 0.6, b: 1, a: 1}
+  remotePlayerColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
+  spawnSpacing: 2
 --- !u!1 &793085878
 GameObject:
   m_ObjectHideFlags: 0

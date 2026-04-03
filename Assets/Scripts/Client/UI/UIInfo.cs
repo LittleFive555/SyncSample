@@ -1,10 +1,16 @@
 using System.Collections.Generic;
-using SyncSample.Client.Gameplay;
 using TMPro;
 using UnityEngine;
 
 namespace SyncSample.Client.UI
 {
+    public interface IInfoSource
+    {
+        public string Name { get; }
+        public Vector2 LogicPosition { get; }
+        public Vector2 ViewPosition { get; }
+    }
+
     public class UIInfo : MonoBehaviour
     {
         public static UIInfo Instance;
@@ -13,7 +19,7 @@ namespace SyncSample.Client.UI
         [SerializeField] private TextMeshProUGUI _posTemplate;
         [SerializeField] private TextMeshProUGUI _lockstepStatus;
 
-        private Dictionary<Character, TextMeshProUGUI> _posMap = new Dictionary<Character, TextMeshProUGUI>();
+        private Dictionary<IInfoSource, TextMeshProUGUI> _posMap = new Dictionary<IInfoSource, TextMeshProUGUI>();
 
         private void Awake()
         {
@@ -24,7 +30,7 @@ namespace SyncSample.Client.UI
         {
             foreach (var pos in _posMap)
             {
-                pos.Value.text = $"{pos.Key.Name} Logic: ({pos.Key.LogicX}, {pos.Key.LogicY}), View: ({pos.Key.transform.localPosition.x}, {pos.Key.transform.localPosition.y})";
+                pos.Value.text = $"{pos.Key.Name} Logic: ({pos.Key.LogicPosition.x}, {pos.Key.LogicPosition.y}), View: ({pos.Key.ViewPosition.x}, {pos.Key.ViewPosition.y})";
             }
         }
 
@@ -38,22 +44,22 @@ namespace SyncSample.Client.UI
             _lockstepStatus.text = $"Lockstep Frame: {frame}";
         }
 
-        public void RegisterPos(Character character)
+        public void RegisterPos(IInfoSource logicSource)
         {
-            if (!_posMap.TryGetValue(character, out var pos))
+            if (!_posMap.TryGetValue(logicSource, out var pos))
             {
                 pos = Instantiate(_posTemplate, _posRoot);
                 pos.gameObject.SetActive(true);
-                _posMap[character] = pos;
+                _posMap[logicSource] = pos;
             }
         }
 
-        public void UnregisterPos(Character character)
+        public void UnregisterPos(IInfoSource logicSource)
         {
-            if (_posMap.TryGetValue(character, out var pos))
+            if (_posMap.TryGetValue(logicSource, out var pos))
             {
                 Destroy(pos.gameObject);
-                _posMap.Remove(character);
+                _posMap.Remove(logicSource);
             }
         }
     }
