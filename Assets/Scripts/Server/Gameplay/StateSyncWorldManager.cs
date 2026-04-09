@@ -107,8 +107,8 @@ namespace SyncSample.Server.Gameplay
                         continue;
                     if (!_characters.TryGetValue(input.clientId, out var ch))
                         continue;
-                    ch.dx = input.dx.ToFloat() * InputMoveSpeed;
-                    ch.dy = input.dy.ToFloat() * InputMoveSpeed;
+                    ch.dx = input.input.GetHorizontal() * InputMoveSpeed;
+                    ch.dy = input.input.GetVertical() * InputMoveSpeed;
                 }
 
                 _playerInputs.Remove(frame);

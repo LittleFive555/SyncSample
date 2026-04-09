@@ -58,11 +58,11 @@ namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
         }
 
         /// <summary> 应用服务器下发的位移，在 WaitForAllClientsThisFrame 中被调用：先应用到逻辑，再同步到显示。 </summary>
-        public void ReceiveInput(string clientId, long frame, FixedPoint dx, FixedPoint dy)
+        public void ReceiveInput(string clientId, long frame, int input)
         {
             if (string.IsNullOrEmpty(clientId) || !_characterEntities.TryGetValue(clientId, out var entity) || entity == null)
                 return;
-            entity.ReceiveInput(frame, dx, dy);
+            entity.ReceiveInput(frame, input);
         }
     }
 }

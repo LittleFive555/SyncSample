@@ -98,8 +98,8 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
 
 
             _lastSentFrame = currentFrame;
-            InputManager.Instance.GetInput(out float dx, out float dy);
-            var msg = new PlayerInputMessage(currentFrame, FixedPoint.FromFloat(dx), FixedPoint.FromFloat(dy));
+            int inputValue = InputManager.Instance.GetInput();
+            var msg = new PlayerInputMessage(currentFrame, inputValue);
             string json = JsonUtility.ToJson(msg);
             int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
             if (sendDelayMs > 0) // 延迟模拟
@@ -117,7 +117,7 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
             
             if (GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
             {
-                CharacterManager.Instance.ReceiveInput(currentFrame, dx, dy);
+                CharacterManager.Instance.ReceiveInput(currentFrame, inputValue.GetHorizontal(), inputValue.GetVertical());
             }
         }
     }

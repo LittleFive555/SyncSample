@@ -9,8 +9,7 @@ namespace SyncSample.Client.Gameplay
     {
         public static InputManager Instance { get; private set; }
 
-        private float _dx;
-        private float _dy;
+        private int _input = 0;
 
         public static void Initialize()
         {
@@ -21,14 +20,23 @@ namespace SyncSample.Client.Gameplay
 
         private void Update()
         {
-            _dx = Input.GetAxisRaw("Horizontal");
-            _dy = Input.GetAxisRaw("Vertical");
+            var dx = Input.GetAxisRaw("Horizontal");
+            if (dx > 0) 
+                _input = _input.SetInput(InputType.Right, true);
+            else
+                _input = _input.SetInput(InputType.Left, true);
+            var dy = Input.GetAxisRaw("Vertical");
+            if (dy > 0) 
+                _input = _input.SetInput(InputType.Up, true);
+            else
+                _input = _input.SetInput(InputType.Down, true);
         }
 
-        public void GetInput(out float dx, out float dy)
+        public int GetInput()
         {
-            dx = _dx;
-            dy = _dy;
+            int input = _input;
+            _input = 0;
+            return input;
         }
     }
 }

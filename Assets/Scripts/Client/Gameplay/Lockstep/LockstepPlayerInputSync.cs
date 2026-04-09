@@ -10,7 +10,7 @@ namespace SyncSample.Client.Gameplay.Lockstep
     public static class LockstepPlayerInputSync
     {
         private static readonly SortedList<long, AllPlayerInputMessage> PendingMessages = new SortedList<long, AllPlayerInputMessage>();
-        private static readonly List<PlayerInputEntry> Pending = new List<PlayerInputEntry>();
+        private static readonly List<PlayerInputMessage> Pending = new List<PlayerInputMessage>();
         private static readonly HashSet<string> AllClientIds = new HashSet<string>();
         private static readonly object ExpectedLock = new object();
         private static int _expectedClientCount;
@@ -79,18 +79,18 @@ namespace SyncSample.Client.Gameplay.Lockstep
             if (message.playerInputs != null)
             {
                 foreach (var e in message.playerInputs)
-                    CharacterManager.Instance.ReceiveInput(e.clientId, e.frame, e.dx, e.dy);
+                    CharacterManager.Instance.ReceiveInput(e.clientId, e.frame, e.input);
             }
         }
 #endregion
 
 #region 原始锁步
         /// <summary> dx, dy 为协议中的定点数，应用时再转为浮点。 </summary>
-        public static void AddPending(long frame, string clientId, FixedPoint dx, FixedPoint dy)
+        public static void AddPending(PlayerInputMessage message)
         {
             lock (Pending)
             {
-                Pending.Add(new PlayerInputEntry(frame, clientId, dx, dy));
+                Pending.Add(message);
             }
         }
 
@@ -133,10 +133,10 @@ namespace SyncSample.Client.Gameplay.Lockstep
         /// <summary> 在收齐本帧输入后调用：应用本帧所有待处理输入后移除。 </summary>
         public static void ApplyFrame(long frame)
         {
-            List<PlayerInputEntry> toApply;
+            List<PlayerInputMessage> toApply;
             lock (Pending)
             {
-                toApply = new List<PlayerInputEntry>();
+                toApply = new List<PlayerInputMessage>();
                 for (int i = Pending.Count - 1; i >= 0; i--)
                 {
                     if (Pending[i].frame == frame)
@@ -147,24 +147,8 @@ namespace SyncSample.Client.Gameplay.Lockstep
                 }
             }
             foreach (var e in toApply)
-                CharacterManager.Instance.ReceiveInput(e.clientId, e.frame, e.dx, e.dy);
+                CharacterManager.Instance.ReceiveInput(e.clientId, e.frame, e.input);
         }
 #endregion
-
-        private struct PlayerInputEntry
-        {
-            public long frame;
-            public string clientId;
-            public FixedPoint dx;
-            public FixedPoint dy;
-
-            public PlayerInputEntry(long frame, string clientId, FixedPoint dx, FixedPoint dy)
-            {
-                this.frame = frame;
-                this.clientId = clientId ?? string.Empty;
-                this.dx = dx;
-                this.dy = dy;
-            }
-        }
     }
 }

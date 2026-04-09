@@ -122,8 +122,8 @@ namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
                 return;
 
             _lastSentFrame = currentFrame;
-            InputManager.Instance.GetInput(out float dx, out float dy);
-            var msg = new PlayerInputMessage(currentFrame, FixedPoint.FromFloat(dx), FixedPoint.FromFloat(dy));
+            var input = InputManager.Instance.GetInput();
+            var msg = new PlayerInputMessage(currentFrame, input);
             string json = JsonUtility.ToJson(msg);
             int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
             if (sendDelayMs > 0) // 延迟模拟

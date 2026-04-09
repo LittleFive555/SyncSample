@@ -9,10 +9,8 @@ namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
         public string Name { get; private set; }
         public bool IsLocal { get; private set; }
 
-        private FixedPoint _dx;
-        public float DeltaX => _dx.ToFloat();
-        private FixedPoint _dy;
-        public float DeltaY => _dy.ToFloat();
+        private int _input;
+        public int Input => _input;
 
         private FixedPoint _logicX;
         public float X => _logicX.ToFloat();
@@ -33,14 +31,13 @@ namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
 
         public void OnLogicFrame(long frame)
         {
-            ApplyMovement(_dx.ToFloat(), _dy.ToFloat());
+            ApplyMovement(_input.GetHorizontal(), _input.GetVertical());
         }
 #endregion
 
-        public void ReceiveInput(long frame, FixedPoint dx, FixedPoint dy)
+        public void ReceiveInput(long frame, int input)
         {
-            _dx = dx;
-            _dy = dy;
+            _input = input;
         }
 
         public void SetPosition(float x, float y)

@@ -9,7 +9,6 @@ namespace SyncSample.Client.Gameplay.World.View
         [SerializeField] private PrimitiveType playerShape = PrimitiveType.Capsule;
         [SerializeField] private Color localPlayerColor = new Color(0.2f, 0.6f, 1f);
         [SerializeField] private Color remotePlayerColor = new Color(0.6f, 0.6f, 0.6f);
-        [SerializeField] private float spawnSpacing = 2f;
 
         private static CharacterSpawner _instance;
         public static CharacterSpawner Instance

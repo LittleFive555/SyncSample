@@ -13,26 +13,22 @@ namespace SyncSample.Common
         public long frame;
         /// <summary> 客户端 Id，服务器广播时填充。 </summary>
         public string clientId;
-        /// <summary> 本帧 x 轴位移（定点数）。 </summary>
-        public FixedPoint dx;
-        /// <summary> 本帧 y 轴位移（定点数）。 </summary>
-        public FixedPoint dy;
+        /// <summary> 本帧输入。 </summary>
+        public int input;
 
         public PlayerInputMessage() { }
 
-        public PlayerInputMessage(long frame, FixedPoint dx, FixedPoint dy)
+        public PlayerInputMessage(long frame, int input)
         {
             this.frame = frame;
-            this.dx = dx;
-            this.dy = dy;
+            this.input = input;
         }
 
-        public PlayerInputMessage(long frame, string clientId, FixedPoint dx, FixedPoint dy)
+        public PlayerInputMessage(long frame, string clientId, int input)
         {
             this.frame = frame;
             this.clientId = clientId ?? string.Empty;
-            this.dx = dx;
-            this.dy = dy;
+            this.input = input;
         }
     }
 }

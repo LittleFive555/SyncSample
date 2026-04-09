@@ -53,17 +53,13 @@ namespace SyncSample.Client.Gameplay.Lockstep
                         if (string.IsNullOrEmpty(input.clientId))
                             break;
                         int receiveDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddReceiveDelay : 0;
-                        long frame = input.frame;
-                        string clientId = input.clientId;
-                        FixedPoint dx = input.dx;
-                        FixedPoint dy = input.dy;
                         if (receiveDelayMs > 0)
                         {
                             GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(receiveDelayMs,
-                                () => LockstepPlayerInputSync.AddPending(frame, clientId, dx, dy));
+                                () => LockstepPlayerInputSync.AddPending(input));
                         }
                         else
-                            LockstepPlayerInputSync.AddPending(frame, clientId, dx, dy);
+                            LockstepPlayerInputSync.AddPending(input);
                     }
                     catch (System.Exception e)
                     {

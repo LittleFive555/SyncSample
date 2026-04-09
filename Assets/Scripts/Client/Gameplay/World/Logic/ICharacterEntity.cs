@@ -5,8 +5,6 @@ namespace SyncSample.Client.Gameplay.World.Logic
         string Id { get; }
         string Name { get; }
         bool IsLocal { get; }
-        float DeltaX { get; }
-        float DeltaY { get; }
         float X { get; }
         float Y { get; }
     }
