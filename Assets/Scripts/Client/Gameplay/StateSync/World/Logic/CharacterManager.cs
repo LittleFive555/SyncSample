@@ -60,7 +60,7 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
         }
 
         /// <summary> 根据服务器 WorldState 创建缺失角色并覆盖位置与输入方向。 </summary>
-        public void ApplyServerWorldState(MsgCharacterEntity[] characters)
+        public void ApplyServerWorldState(long frame, MsgCharacterEntity[] characters)
         {
             if (characters == null)
                 return;
@@ -73,7 +73,7 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
                 var characterEntity = EnsurePlayer(e.id, displayName);
                 if (characterEntity == null)
                     continue;
-                characterEntity.ReceiveWorldState(e.x, e.y, e.dx, e.dy);
+                characterEntity.ReceiveWorldState(frame, e.x, e.y, e.dx, e.dy);
             }
         }
     }

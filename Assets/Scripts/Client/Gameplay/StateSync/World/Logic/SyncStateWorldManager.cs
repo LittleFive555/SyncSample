@@ -66,7 +66,7 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
 
             }
 
-            CharacterManager.Instance.ApplyServerWorldState(state.characters);
+            CharacterManager.Instance.ApplyServerWorldState(_serverFrame, state.characters);
         }
 
         public void OnUpdate(float deltaTime)
