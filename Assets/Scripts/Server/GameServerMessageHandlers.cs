@@ -1,3 +1,4 @@
+using SyncSample.Client.Race;
 using SyncSample.Common;
 
 namespace SyncSample.Server
@@ -17,8 +18,10 @@ namespace SyncSample.Server
             _initialized = true;
             if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
                 _syncMessageHandler = new LockstepMessageHandlers();
-            else
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.StateSync)
                 _syncMessageHandler = new StateSyncMessageHandlers();
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.Race_StateSync)
+                _syncMessageHandler = new RaceMessageHandlers();
         }
         public static void Handle(TcpGameServer server, ClientSession session, NetworkEnvelope envelope)
         {

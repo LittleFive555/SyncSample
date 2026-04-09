@@ -32,9 +32,7 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
 
         public void Initialize()
         {
-            _hasReceivedFirstWorldState = false;
-            _serverFrame = 0;
-            _frameDeltaTime = 0f;
+            ResetSession();
         }
 
         /// <summary> 断线重连等场景下重置，使下一条 WorldState 再次走首次初始化。 </summary>

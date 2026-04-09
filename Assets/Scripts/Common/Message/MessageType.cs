@@ -24,5 +24,11 @@ namespace SyncSample.Common
         public const string PlayerInput = "player_input";
         /// <summary> 服务器广播：所有客户端的输入。 </summary>
         public const string AllPlayerInput = "all_player_input";
+
+#region Race
+        public const string RaceWorldState = "race_world_state";
+#endregion
+
+        
     }
 }

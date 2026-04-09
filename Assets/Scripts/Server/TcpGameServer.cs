@@ -43,7 +43,13 @@ namespace SyncSample.Server
             if (_running) return;
             _running = true;
             if (GlobalSwitch.Instance.SyncMode == SyncMode.StateSync)
+            {
                 StateSyncWorldManager.Instance.Start(this);
+            }
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.Race_StateSync)
+            {
+                RaceSyncWorldManager.Instance.Start(this);
+            }
 
             _listener = new TcpListener(IPAddress.Any, _port);
             _listener.Start();

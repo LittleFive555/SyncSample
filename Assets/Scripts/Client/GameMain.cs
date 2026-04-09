@@ -5,6 +5,9 @@ using SyncSample.Client.Gameplay.Lockstep.World.Logic;
 using SyncSample.Client.Gameplay.StateSync;
 using SyncSample.Client.Gameplay.StateSync.World.Logic;
 using SyncSample.Client.Gameplay.World.View;
+using SyncSample.Client.Race;
+using SyncSample.Client.Race.Logic;
+using SyncSample.Client.Race.View;
 using SyncSample.Client.UI;
 using SyncSample.Common;
 using UnityEngine;
@@ -82,7 +85,7 @@ namespace SyncSample.Client
                 GameLooper.Updater.Register(LockstepWorldManager.Instance);
                 LockstepPlayerInputSync.SetExpectedClientCount(GlobalSwitch.Instance.LockstepSwitch.ExpectedClientCount);
             }
-            else
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.StateSync)
             {
                 SyncStateWorldManager.Instance.Initialize();
 
@@ -90,6 +93,15 @@ namespace SyncSample.Client
                 SyncStateCharacterManager.Instance.OnPlayerRemoved += CharacterSpawner.Instance.RemovePlayer;
 
                 GameLooper.Updater.Register(SyncStateWorldManager.Instance);
+            }
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.Race_StateSync)
+            {
+                RaceWorldManager.Instance.Initialize();
+                
+                VehicleManager.Instance.OnVehicleCreated += VehicleSpawner.Instance.EnsureVehicle;
+                VehicleManager.Instance.OnVehicleRemoved += VehicleSpawner.Instance.RemoveVehicle;
+
+                GameLooper.Updater.Register(RaceWorldManager.Instance);
             }
 
             Logger.Log("After Launch");
@@ -106,8 +118,10 @@ namespace SyncSample.Client
             Client.OnMessageReceived += OnMessageReceived;
             if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
                 Client.OnMessageReceived += LockstepMessageHandlers.OnMessageReceived;
-            else
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.StateSync)
                 Client.OnMessageReceived += SyncStateMessageHandlers.OnMessageReceived;
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.Race_StateSync)
+                Client.OnMessageReceived += RaceMessageHandlers.OnMessageReceived;
         }
 
         public void DisconnectServer()
@@ -118,8 +132,10 @@ namespace SyncSample.Client
             Client.OnMessageReceived -= OnMessageReceived;
             if (GlobalSwitch.Instance.SyncMode == SyncMode.Lockstep)
                 Client.OnMessageReceived -= LockstepMessageHandlers.OnMessageReceived;
-            else
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.StateSync)
                 Client.OnMessageReceived -= SyncStateMessageHandlers.OnMessageReceived;
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.Race_StateSync)
+                Client.OnMessageReceived -= RaceMessageHandlers.OnMessageReceived;
         }
 
         private void OnConnected()
@@ -135,6 +151,8 @@ namespace SyncSample.Client
 
             if (GlobalSwitch.Instance.SyncMode == SyncMode.StateSync)
                 SyncStateWorldManager.Instance.ResetSession();
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.Race_StateSync)
+                RaceWorldManager.Instance.ResetSession();
         }
 
         private void OnMessageReceived(NetworkEnvelope envelope)

@@ -47,7 +47,7 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
 
         public void ReceiveWorldState(long frame, float x, float y, float dx, float dy)
         {
-            if (GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
+            if (IsLocal && GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
             {
                 if (_predictedInputs.TryGetValue(frame, out var predictedInput))
                 {
