@@ -21,15 +21,21 @@ namespace SyncSample.Client.Gameplay
         private void Update()
         {
             var dx = Input.GetAxisRaw("Horizontal");
-            if (dx > 0) 
-                _input = _input.SetInput(InputType.Right, true);
-            else
-                _input = _input.SetInput(InputType.Left, true);
+            if (!Mathf.Approximately(dx, 0))
+            {
+                if (dx > 0) 
+                    _input = _input.SetInput(InputType.Right, true);
+                else
+                    _input = _input.SetInput(InputType.Left, true);
+            }
             var dy = Input.GetAxisRaw("Vertical");
-            if (dy > 0) 
-                _input = _input.SetInput(InputType.Up, true);
-            else
-                _input = _input.SetInput(InputType.Down, true);
+            if (!Mathf.Approximately(dy, 0))
+            {
+                if (dy > 0) 
+                    _input = _input.SetInput(InputType.Up, true);
+                else
+                    _input = _input.SetInput(InputType.Down, true);
+            }
         }
 
         public int GetInput()
