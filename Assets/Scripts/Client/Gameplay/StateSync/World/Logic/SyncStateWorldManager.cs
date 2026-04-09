@@ -89,35 +89,37 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
         private long _lastSentFrame = -1;
         private void ProcessInput()
         {
-            // 简化处理，一帧只能发送一个操作
-            // 如果帧时间较长，或者操作较快，可以考虑每帧打包发送多个操作、或者每次有操作时立即发送
-            long currentFrame = _localFrame + 1;
-            if (currentFrame <= _lastSentFrame)
-                return;
-
-
-
-            _lastSentFrame = currentFrame;
             int inputValue = InputManager.Instance.GetInput();
-            var msg = new PlayerInputMessage(currentFrame, inputValue);
-            string json = JsonUtility.ToJson(msg);
-            int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
-            if (sendDelayMs > 0) // 延迟模拟
+            if (inputValue != 0)
             {
-                var c = GameMain.Instance.Client;
-                GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(sendDelayMs, () =>
+                // 简化处理，一帧只能发送一个操作
+                // 如果帧时间较长，或者操作较快，可以考虑每帧打包发送多个操作、或者每次有操作时立即发送
+                long currentFrame = _localFrame + 1;
+                if (currentFrame == _lastSentFrame)
+                    return;
+
+                _lastSentFrame = currentFrame;
+
+                var msg = new PlayerInputMessage(currentFrame, inputValue);
+                string json = JsonUtility.ToJson(msg);
+                int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
+                if (sendDelayMs > 0) // 延迟模拟
                 {
-                    if (c != null && c.IsConnected)
-                        c.Send(MessageType.PlayerInput, json);
-                });
-            }
-            else
-                GameMain.Instance.Client.Send(MessageType.PlayerInput, json);
-            
-            
-            if (GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
-            {
-                CharacterManager.Instance.ReceiveInput(currentFrame, inputValue.GetHorizontal(), inputValue.GetVertical());
+                    var c = GameMain.Instance.Client;
+                    GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(sendDelayMs, () =>
+                    {
+                        if (c != null && c.IsConnected)
+                            c.Send(MessageType.PlayerInput, json);
+                    });
+                }
+                else
+                    GameMain.Instance.Client.Send(MessageType.PlayerInput, json);
+                
+                
+                if (GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
+                {
+                    CharacterManager.Instance.ReceiveInput(currentFrame, inputValue.GetHorizontal(), inputValue.GetVertical());
+                }
             }
         }
     }
