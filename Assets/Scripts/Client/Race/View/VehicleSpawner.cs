@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using SyncSample.Common.Model.Race;
 using UnityEngine;
+using Cinemachine;
+using SyncSample.Client.Race.Logic;
 
 namespace SyncSample.Client.Race.View
 {
     public class VehicleSpawner : MonoBehaviour
     {
         [SerializeField] private Vehicle vehiclePrefab;
+        [SerializeField] private CinemachineVirtualCamera cameraFollow;
 
         private static VehicleSpawner _instance;
         public static VehicleSpawner Instance
@@ -21,7 +24,7 @@ namespace SyncSample.Client.Race.View
 
         private readonly Dictionary<string, Vehicle> _vehicleObjects = new Dictionary<string, Vehicle>();
 
-        public void EnsureVehicle(VehicleEntity vehicleEntity)
+        public void EnsureVehicle(ClientVehicleEntity vehicleEntity)
         {
             if (vehicleEntity == null || string.IsNullOrEmpty(vehicleEntity.id))
                 return;
@@ -33,6 +36,13 @@ namespace SyncSample.Client.Race.View
             vehicle.gameObject.name = vehicleEntity.name;
             vehicle.transform.SetParent(transform);
             vehicle.Init(vehicleEntity);
+
+            if (vehicleEntity.IsLocal)
+            {
+                var cameraFollowInstance = Instantiate(cameraFollow);
+                cameraFollowInstance.LookAt = vehicle.transform;
+                cameraFollowInstance.Follow = vehicle.transform;
+            }
 
             _vehicleObjects[vehicleEntity.id] = vehicle;
         }

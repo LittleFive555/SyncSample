@@ -21,8 +21,8 @@ namespace SyncSample.Client.Race.Logic
 
         public string SelfId;
 
-        public Action<VehicleEntity> OnVehicleCreated;
-        public Action<VehicleEntity> OnVehicleRemoved;
+        public Action<ClientVehicleEntity> OnVehicleCreated;
+        public Action<ClientVehicleEntity> OnVehicleRemoved;
 
         public ClientVehicleEntity EnsureVehicle(string id, string displayName)
         {

@@ -1307,7 +1307,7 @@ MonoBehaviour:
   m_ShowCameraFrustum: 1
   m_IgnoreTimeScale: 0
   m_WorldUpOverride: {fileID: 0}
-  m_UpdateMethod: 2
+  m_UpdateMethod: 1
   m_BlendUpdateMethod: 1
   m_DefaultBlend:
     m_Style: 1
@@ -1429,6 +1429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vehiclePrefab: {fileID: 6524365420910282139, guid: f8c96a3ec03d5984eb5d77f331fed354, type: 3}
+  cameraFollow: {fileID: 3325610032577715781, guid: ccf84f9bfa8494047b27fe25c127120e, type: 3}
 --- !u!4 &1623464657
 Transform:
   m_ObjectHideFlags: 0
