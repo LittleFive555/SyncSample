@@ -43,8 +43,17 @@ namespace SyncSample.Client.Race.View
                 // 否则在转向过程中会持续累积横向偏差。
                 Vector3 currentPosition = transform.localPosition;
                 Vector3 targetPosition = new Vector3(Entity.x, currentPosition.y, Entity.z);
-                float moveStep = Mathf.Abs(Entity.speed) * Time.deltaTime;
-                transform.localPosition = Vector3.MoveTowards(currentPosition, targetPosition, moveStep);
+                var absSpeed = Mathf.Abs(Entity.speed);
+                if (Vector3.Distance(currentPosition, targetPosition) > absSpeed * RaceWorldManager.Instance.FrameDeltaTime * 2) // 如果逻辑点位变化过大，直接同步
+                {
+                    Logger.Log($"逻辑点位变化过大，显示上直接同步 x: {Entity.x}, z: {Entity.z}");
+                    SyncTransform();
+                }
+                else
+                {
+                    float moveStep = absSpeed * Time.deltaTime;
+                    transform.localPosition = Vector3.MoveTowards(currentPosition, targetPosition, moveStep);
+                }
             }
             else
             {

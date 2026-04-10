@@ -29,6 +29,7 @@ namespace SyncSample.Client.Race.Logic
                 base.ReceiveInput(horizontal, vertical);
                 UpdateState(deltaTime);
                 _predictedStates[frame] = CreateSnapshot();
+                Logger.Log($"[{frame}] 预测 x: {x}, z: {z}, rotation: {rotation}, speed: {speed}");
                 return;
             }
         }
@@ -57,7 +58,12 @@ namespace SyncSample.Client.Race.Logic
                     {
                         Logger.Log($"[{frame}] 预测失败 x: {x}, z: {z}, rotation: {rotation}, speed: {speed}");
                     }
-                    _predictedStates.Clear();
+                    ClearPredictedStates();
+                }
+                else // 本地落后于服务器
+                {
+                    Logger.Log($"[{frame}] 本地落后于服务器，清空预测状态，直接同步服务器状态");
+                    ClearPredictedStates();
                 }
             }
 
@@ -65,6 +71,11 @@ namespace SyncSample.Client.Race.Logic
             this.z = z;
             this.rotation = rotation;
             this.speed = speed;
+        }
+
+        public void ClearPredictedStates()
+        {
+            _predictedStates.Clear();
         }
 
         private VehicleEntity CreateSnapshot()

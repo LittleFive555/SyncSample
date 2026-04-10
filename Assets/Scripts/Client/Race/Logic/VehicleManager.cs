@@ -68,6 +68,14 @@ namespace SyncSample.Client.Race.Logic
             entity.ReceiveInput(frame, horizontal, vertical, deltaTime);
         }
 
+        public void ClearPredictedStates()
+        {
+            foreach (var vehicleEntity in _vehicleEntities.Values)
+            {
+                vehicleEntity.ClearPredictedStates();
+            }
+        }
+
         /// <summary>
         /// 根据外部同步数据创建缺失车辆并覆盖状态。
         /// </summary>
