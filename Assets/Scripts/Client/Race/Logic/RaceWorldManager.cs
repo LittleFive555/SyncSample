@@ -67,7 +67,7 @@ namespace SyncSample.Client.Race.Logic
             else
             {
                 _serverFrame = state.frame;
-                if (_localFrame + 1 != _serverFrame)
+                if (_localFrame + 1 < _serverFrame)
                 {
                     Logger.Log($"[SyncStateWorld] 前后端帧号差距过大，直接同步服务器帧号，服务器帧号：{_serverFrame}，本地帧号：{_localFrame}");
                     _accumulatedTime = 0;
