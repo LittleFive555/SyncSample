@@ -4,8 +4,8 @@ namespace SyncSample.Client
 {
     public class FollowCamera : MonoBehaviour
     {
-        public float height = 3.8f;
-        public float baseDistance = 8.5f;
+        public float height = 30f;
+        public float baseDistance = 50f;
         public float maxExtraDistance = 3f;
         public float lookAtHeight = 1.6f;
         public float baseLookAhead = 6f;
