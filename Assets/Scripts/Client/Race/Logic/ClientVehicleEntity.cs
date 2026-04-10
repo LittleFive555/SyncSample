@@ -36,7 +36,7 @@ namespace SyncSample.Client.Race.Logic
 
         public void ReceiveWorldState(long frame, float x, float z, float rotation, float speed)
         {
-            if (IsLocal && GlobalSwitch.Instance != null && GlobalSwitch.Instance.StateSyncSwitch != null && GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
+            if (IsLocal && GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
             {
                 if (_predictedStates.TryGetValue(frame, out var predictedState))
                 {
@@ -71,6 +71,7 @@ namespace SyncSample.Client.Race.Logic
             this.z = z;
             this.rotation = rotation;
             this.speed = speed;
+            Logger.Log($"[{frame}] 收到服务器状态 x: {x}, z: {z}, rotation: {rotation}, speed: {speed}");
         }
 
         public void ClearPredictedStates()
