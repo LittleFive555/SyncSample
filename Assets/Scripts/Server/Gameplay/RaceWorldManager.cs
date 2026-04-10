@@ -46,6 +46,7 @@ namespace SyncSample.Server.Gameplay
             foreach (var vehicle in _vehicles.Values)
             {
                 vehicle.UpdateState(deltaTime);
+                Logger.Log($"[{frame}]UpdateVehicle: {vehicle.id}, x: {vehicle.x}, z: {vehicle.z}, rotation: {vehicle.rotation}, speed: {vehicle.speed}");
             }
 
             var worldState = new RaceWorldStateMessage

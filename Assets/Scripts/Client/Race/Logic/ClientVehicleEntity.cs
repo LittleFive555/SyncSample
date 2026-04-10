@@ -21,17 +21,16 @@ namespace SyncSample.Client.Race.Logic
             if (!IsLocal)
                 return;
 
-            horizontal = Clamp(horizontal, -1f, 1f);
-            vertical = Clamp(vertical, -1f, 1f);
-
-            if (GlobalSwitch.Instance != null && GlobalSwitch.Instance.StateSyncSwitch != null && GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
+            if (GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
             {
+                horizontal = Clamp(horizontal, -1f, 1f);
+                vertical = Clamp(vertical, -1f, 1f);
+
                 base.ReceiveInput(horizontal, vertical);
+                UpdateState(deltaTime);
                 _predictedStates[frame] = CreateSnapshot();
                 return;
             }
-
-            base.ReceiveInput(horizontal, vertical);
         }
 
         public void ReceiveWorldState(long frame, float x, float z, float rotation, float speed)
@@ -51,9 +50,13 @@ namespace SyncSample.Client.Race.Logic
                     if (predictedState.IsStateEqual(serverState))
                     {
                         _predictedStates.Remove(frame);
+                        Logger.Log($"[{frame}] 预测成功 x: {x}, z: {z}, rotation: {rotation}, speed: {speed}");
                         return;
                     }
-
+                    else
+                    {
+                        Logger.Log($"[{frame}] 预测失败 x: {x}, z: {z}, rotation: {rotation}, speed: {speed}");
+                    }
                     _predictedStates.Clear();
                 }
             }

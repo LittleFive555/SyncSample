@@ -84,22 +84,15 @@ namespace SyncSample.Client.Race.Logic
             {
                 _accumulatedTime -= _frameDeltaTime;
                 _localFrame++;
-            }
 
-            ProcessInput();
+                ProcessInput(_localFrame + 1);
+            }
         }
 
-        private long _lastSentFrame = -1;
-        private void ProcessInput()
+        private void ProcessInput(long inputFrame)
         {
-            long currentFrame = _localFrame + 1;
-            if (currentFrame == _lastSentFrame)
-                return;
-
-            _lastSentFrame = currentFrame;
-
             int inputValue = InputManager.Instance.GetInput();
-            var msg = new PlayerInputMessage(currentFrame, inputValue);
+            var msg = new PlayerInputMessage(inputFrame, inputValue);
             string json = JsonUtility.ToJson(msg);
             int sendDelayMs = GlobalSwitch.Instance != null ? GlobalSwitch.Instance.AddSendDelay : 0;
             if (sendDelayMs > 0)
@@ -119,7 +112,7 @@ namespace SyncSample.Client.Race.Logic
             if (GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
             {
                 VehicleManager.Instance.ReceiveInput(
-                    currentFrame,
+                    inputFrame,
                     inputValue.GetHorizontal(),
                     inputValue.GetVertical(),
                     _frameDeltaTime);

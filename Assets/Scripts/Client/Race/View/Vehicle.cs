@@ -1,3 +1,5 @@
+using System;
+using SyncSample.Client.Race.Logic;
 using SyncSample.Client.UI;
 using SyncSample.Common;
 using SyncSample.Common.Model.Race;
@@ -29,23 +31,20 @@ namespace SyncSample.Client.Race.View
 
             if (GlobalSwitch.Instance.ClientInterpolation)
             {
-                float moveStep = VehicleEntity.maxForwardSpeed * Time.deltaTime;
-                Vector3 onlyX = Vector3.MoveTowards(
-                    transform.localPosition,
-                    new Vector3(Entity.x, transform.localPosition.y, transform.localPosition.z),
-                    moveStep);
-                Vector3 onlyZ = Vector3.MoveTowards(
-                    transform.localPosition,
-                    new Vector3(transform.localPosition.x, transform.localPosition.y, Entity.z),
-                    moveStep);
-                transform.localPosition = new Vector3(onlyX.x, transform.localPosition.y, onlyZ.z);
-
-                // 插值旋转
+                // 先旋转朝向
                 float currentYRotation = transform.localRotation.eulerAngles.y;
                 float targetYRotation = Entity.rotation;
-                float rotationStep = VehicleEntity.turnSpeed * Time.deltaTime;
+                float speedFactor = Math.Min(1f, Math.Abs(Entity.speed) / Math.Max(0.001f, VehicleEntity.maxForwardSpeed));
+                float rotationStep = VehicleEntity.turnSpeed * speedFactor * Time.deltaTime;
                 float newYRotation = Mathf.MoveTowardsAngle(currentYRotation, targetYRotation, rotationStep);
                 transform.localRotation = Quaternion.Euler(0f, newYRotation, 0f);
+
+                // 位置直接朝逻辑点插值，不沿当前车头方向推进，
+                // 否则在转向过程中会持续累积横向偏差。
+                Vector3 currentPosition = transform.localPosition;
+                Vector3 targetPosition = new Vector3(Entity.x, currentPosition.y, Entity.z);
+                float moveStep = Mathf.Abs(Entity.speed) * Time.deltaTime;
+                transform.localPosition = Vector3.MoveTowards(currentPosition, targetPosition, moveStep);
             }
             else
             {

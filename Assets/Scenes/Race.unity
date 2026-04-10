@@ -323,7 +323,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.20754719, g: 0.20754719, b: 0.20754719, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -595,7 +595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FrameDeltaTime: 0.25
   DelayApplyFrameCount: 3
-  ClientPrediction: 0
+  ClientPrediction: 1
 --- !u!114 &301842012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -626,7 +626,7 @@ MonoBehaviour:
   SyncMode: 2
   AddSendDelay: 0
   AddReceiveDelay: 0
-  ClientInterpolation: 0
+  ClientInterpolation: 1
   _lockstepSwitch: {fileID: 301842012}
   _stateSyncSwitch: {fileID: 301842011}
 --- !u!4 &301842015
@@ -1071,7 +1071,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.20754719, g: 0.20754719, b: 0.20754719, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1205,7 +1205,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.20754719, g: 0.20754719, b: 0.20754719, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
