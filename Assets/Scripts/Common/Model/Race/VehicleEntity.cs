@@ -26,7 +26,7 @@ namespace SyncSample.Common.Model.Race
         private float _vertical;
 
         public const float maxForwardSpeed = 120f;
-        public const float maxReverseSpeed = 20f;
+        public const float maxReverseSpeed = 50f;
         public const float acceleration = 30f;
         public const float brakeDeceleration = 70f;
         public const float naturalDeceleration = 10f;
