@@ -38,6 +38,17 @@ namespace SyncSample.Common.Model.Race
             this.name = name;
         }
 
+        public VehicleEntity Clone()
+        {
+            return new VehicleEntity(id, name)
+            {
+                x = x,
+                z = z,
+                rotation = rotation,
+                speed = speed
+            };
+        }
+
         /// <summary>
         /// 接收归一化输入并推进车辆状态。
         /// horizontal: [-1, 1]，负数左转，正数右转。
