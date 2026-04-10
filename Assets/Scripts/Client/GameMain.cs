@@ -166,6 +166,8 @@ namespace SyncSample.Client
                         var pong = JsonUtility.FromJson<PongMessage>(envelope.payload);
                         long rtt = TimeUtil.UtcNowMillis() - pong.timestamp;
                         UIInfo.Instance.SetDelay(rtt);
+                        if (GlobalSwitch.Instance.SyncMode == SyncMode.Race_StateSync)
+                            RaceWorldManager.Instance.UpdateRtt(rtt);
                     }
                     catch { }
                     break;

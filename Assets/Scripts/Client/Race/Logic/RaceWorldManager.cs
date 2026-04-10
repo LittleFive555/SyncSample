@@ -28,6 +28,11 @@ namespace SyncSample.Client.Race.Logic
         private long _serverFrame;
         private float _frameDeltaTime;
         private float _accumulatedTime;
+        // RTT 的平滑值，用来估算单程网络延迟。
+        private float _smoothedRttMs;
+        private bool _hasRttSample;
+        // 本地时钟与“服务器时间 + 单程延迟”之间的误差，后续在 Update 中逐步吃掉。
+        private float _clockErrorSeconds;
         /// <summary> 是否已收到过至少一条 WorldState（可开始按服务器节奏发输入等）。 </summary>
         private bool _hasReceivedFirstWorldState;
 
@@ -46,6 +51,22 @@ namespace SyncSample.Client.Race.Logic
             _serverFrame = 0;
             _hasReceivedFirstWorldState = false;
             _accumulatedTime = 0f;
+            _smoothedRttMs = 0f;
+            _hasRttSample = false;
+            _clockErrorSeconds = 0f;
+        }
+
+        public void UpdateRtt(long rttMs)
+        {
+            float sampleMs = Mathf.Max(0f, rttMs);
+            if (!_hasRttSample)
+            {
+                _smoothedRttMs = sampleMs;
+                _hasRttSample = true;
+                return;
+            }
+
+            _smoothedRttMs = Mathf.Lerp(_smoothedRttMs, sampleMs, 0.2f);
         }
 
         /// <summary>
@@ -59,19 +80,27 @@ namespace SyncSample.Client.Race.Logic
             if (!_hasReceivedFirstWorldState)
             {
                 _hasReceivedFirstWorldState = true;
-                _accumulatedTime = 0;
                 _frameDeltaTime = state.frameDeltaTime;
-                _localFrame = _serverFrame = state.frame;
-                Logger.Log($"[SyncStateWorld] 首次 WorldState，初始化并同步服务器帧号 frame={state.frame}, frameDeltaTime={state.frameDeltaTime}");
+                _serverFrame = state.frame;
+                // 首包直接把本地逻辑时钟放到目标位置，避免一开始慢慢追钟。
+                SetLocalClock(GetTargetLocalTimeSeconds(state.frame));
+                Logger.Log($"[SyncStateWorld] 首次 WorldState，初始化并同步服务器帧号 frame={state.frame}, frameDeltaTime={state.frameDeltaTime}, rtt={_smoothedRttMs:F1}ms");
             }
             else
             {
                 _serverFrame = state.frame;
-                if (_localFrame + 1 < _serverFrame)
+                _frameDeltaTime = state.frameDeltaTime;
+
+                float targetLocalTime = GetTargetLocalTimeSeconds(state.frame);
+                float localTime = GetLocalTimeSeconds();
+                _clockErrorSeconds = targetLocalTime - localTime;
+
+                // 偏差特别大时直接拉齐，避免本地帧号和服务器差太远。
+                if (Mathf.Abs(_clockErrorSeconds) > _frameDeltaTime * GlobalSwitch.Instance.StateSyncSwitch.SnapThresholdInFrames)
                 {
-                    Logger.Log($"[SyncStateWorld] 前后端帧号差距过大，直接同步服务器帧号，服务器帧号：{_serverFrame}，本地帧号：{_localFrame}");
-                    _accumulatedTime = 0;
-                    _localFrame = _serverFrame;
+                    Logger.Log($"[SyncStateWorld] RTT 校时差距过大，直接校正。serverFrame={_serverFrame}, localFrame={_localFrame}, error={_clockErrorSeconds:F3}s, rtt={_smoothedRttMs:F1}ms");
+                    SetLocalClock(targetLocalTime);
+                    _clockErrorSeconds = 0f;
                 }
             }
 
@@ -82,8 +111,10 @@ namespace SyncSample.Client.Race.Logic
         {
             if (!_hasReceivedFirstWorldState)
                 return;
-            
-            _accumulatedTime += deltaTime;
+
+            // 每帧只吃掉一小部分时钟误差，避免视觉和输入帧号出现突跳。
+            float correctedDeltaTime = deltaTime + ConsumeClockCorrection(deltaTime);
+            _accumulatedTime += correctedDeltaTime;
             while (_accumulatedTime >= _frameDeltaTime)
             {
                 _accumulatedTime -= _frameDeltaTime;
@@ -91,6 +122,50 @@ namespace SyncSample.Client.Race.Logic
 
                 ProcessInput(_localFrame + 1);
             }
+        }
+
+        private float GetTargetLocalTimeSeconds(long serverFrame)
+        {
+            // 简化算法：
+            // 收到 frame=N 的快照时，服务器实际上已经又往前跑了大约半个 RTT，
+            // 所以客户端目标时钟取“服务器帧时间 + RTT/2”。
+            return serverFrame * _frameDeltaTime + GetEstimatedOneWayDelaySeconds();
+        }
+
+        private float GetEstimatedOneWayDelaySeconds()
+        {
+            return _hasRttSample ? _smoothedRttMs * 0.001f * 0.5f : 0f;
+        }
+
+        private float GetLocalTimeSeconds()
+        {
+            return _localFrame * _frameDeltaTime + _accumulatedTime;
+        }
+
+        private void SetLocalClock(float targetTimeSeconds)
+        {
+            if (_frameDeltaTime <= 0.0001f)
+            {
+                _localFrame = 0;
+                _accumulatedTime = 0f;
+                return;
+            }
+
+            targetTimeSeconds = Mathf.Max(0f, targetTimeSeconds);
+            _localFrame = Mathf.FloorToInt(targetTimeSeconds / _frameDeltaTime);
+            _accumulatedTime = targetTimeSeconds - _localFrame * _frameDeltaTime;
+        }
+
+        private float ConsumeClockCorrection(float deltaTime)
+        {
+            if (Mathf.Abs(_clockErrorSeconds) <= 0.0001f)
+                return 0f;
+
+            // 限制每帧最多修正一小段时间，防止本地时钟一下子快/慢太多。
+            float maxCorrection = deltaTime * GlobalSwitch.Instance.StateSyncSwitch.ClockCorrectionRate;
+            float correction = Mathf.Clamp(_clockErrorSeconds, -maxCorrection, maxCorrection);
+            _clockErrorSeconds -= correction;
+            return correction;
         }
 
         private void ProcessInput(long inputFrame)
