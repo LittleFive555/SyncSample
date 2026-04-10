@@ -626,7 +626,7 @@ MonoBehaviour:
   SyncMode: 2
   AddSendDelay: 0
   AddReceiveDelay: 0
-  ClientInterpolation: 0
+  ClientInterpolation: 1
   _lockstepSwitch: {fileID: 301842012}
   _stateSyncSwitch: {fileID: 301842011}
 --- !u!4 &301842015
@@ -1377,18 +1377,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 427068a959e174c4c8165e5fcc381db1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followOffset: {x: 0, y: 40, z: -80}
-  lookAtOffset: {x: 0, y: 0, z: 20}
+  height: 30
+  baseDistance: 50
+  maxExtraDistance: 3
+  lookAtHeight: 1.6
+  baseLookAhead: 7
+  maxExtraLookAhead: 5
   target: {fileID: 0}
-  maxFollowSpeed: 35
-  followAcceleration: 50
-  rotationLerpSpeed: 7
   motionSmoothSpeed: 8
+  forwardSmoothSpeed: 12
+  positionSmoothTime: 0.18
+  rotationSmoothSpeed: 9
   speedForMaxEffects: 40
-  maxSpeedPullback: 3
-  maxLookAhead: 6
-  maxTurnOffset: 1.25
+  maxTurnOffset: 0.75
+  turnOffsetSmoothSpeed: 6
   maxTurnRateForEffects: 90
+  maxRollAngle: 3.5
+  baseFov: 60
+  maxFov: 72
+  fovSmoothSpeed: 4
 --- !u!1 &1623464655
 GameObject:
   m_ObjectHideFlags: 0
