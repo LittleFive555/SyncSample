@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SyncSample.Client.Race.Logic;
 using SyncSample.Client.UI;
 using SyncSample.Common;
@@ -15,7 +16,16 @@ namespace SyncSample.Client.Race.View
 
         public Vector2 LogicPosition => new Vector2(Entity.x, Entity.z);
 
-        public Vector2 ViewPosition => new Vector2(transform.localPosition.x, transform.localPosition.z);
+        public Vector2 ViewPosition => new Vector2(transform.position.x, transform.position.z);
+
+        private long _nextSyncFrame;
+
+        private float _lastYRotation;
+        private float _nextYRotation;
+        private Vector2 _lastLogicPosition;
+        private Vector2 _nextLogicPosition;
+
+        private float _visualTimer = 0;
 
         public void Init(VehicleEntity vehicleEntity)
         {
@@ -31,28 +41,29 @@ namespace SyncSample.Client.Race.View
 
             if (GlobalSwitch.Instance.ClientInterpolation)
             {
-                // 先旋转朝向
-                float currentYRotation = transform.localRotation.eulerAngles.y;
-                float targetYRotation = Entity.rotation;
-                float speedFactor = Math.Min(1f, Math.Abs(Entity.speed) / Math.Max(0.001f, VehicleEntity.maxForwardSpeed));
-                float rotationStep = VehicleEntity.turnSpeed * speedFactor * Time.deltaTime;
-                float newYRotation = Mathf.MoveTowardsAngle(currentYRotation, targetYRotation, rotationStep);
-                transform.localRotation = Quaternion.Euler(0f, newYRotation, 0f);
+                _visualTimer += Time.deltaTime;
+                float t = Mathf.Clamp01(_visualTimer / RaceWorldManager.Instance.FrameDeltaTime);
+
+                // 先旋转朝向，采用线性插值，不按原速度推进
+                // 线性插值而不是MoveTowardsAngle
+                float lerpYRotation = Mathf.LerpAngle(_lastYRotation, _nextYRotation, t);
+                transform.rotation = Quaternion.Euler(0f, lerpYRotation, 0f);
 
                 // 位置直接朝逻辑点插值，不沿当前车头方向推进，
                 // 否则在转向过程中会持续累积横向偏差。
-                Vector3 currentPosition = transform.localPosition;
-                Vector3 targetPosition = new Vector3(Entity.x, currentPosition.y, Entity.z);
-                var absSpeed = Mathf.Abs(Entity.speed);
-                if (Vector3.Distance(currentPosition, targetPosition) > absSpeed * RaceWorldManager.Instance.FrameDeltaTime * 2) // 如果逻辑点位变化过大，直接同步
+
+                var lerpLogicPosition = Vector3.Lerp(_lastLogicPosition, _nextLogicPosition, t);
+                transform.position = new Vector3(lerpLogicPosition.x, transform.position.y, lerpLogicPosition.y);
+
+                var targetYRotation = Entity.rotation;
+                var newLogicPosition = new Vector2(Entity.x, Entity.z);
+                if (Vector2.Distance(_nextLogicPosition, newLogicPosition) > 0.01f)
                 {
-                    Logger.Log($"逻辑点位变化过大，显示上直接同步 x: {Entity.x}, z: {Entity.z}");
-                    SyncTransform();
-                }
-                else
-                {
-                    float moveStep = absSpeed * Time.deltaTime;
-                    transform.localPosition = Vector3.MoveTowards(currentPosition, targetPosition, moveStep);
+                    _lastYRotation = lerpYRotation;
+                    _lastLogicPosition = lerpLogicPosition;
+                    _nextYRotation = targetYRotation;
+                    _nextLogicPosition = newLogicPosition;
+                    _visualTimer = 0;
                 }
             }
             else
@@ -63,8 +74,15 @@ namespace SyncSample.Client.Race.View
 
         private void SyncTransform()
         {
-            transform.localPosition = new Vector3(Entity.x, 0f, Entity.z);
-            transform.localRotation = Quaternion.Euler(0f, Entity.rotation, 0f);
+            transform.position = new Vector3(Entity.x, 0f, Entity.z);
+            transform.rotation = Quaternion.Euler(0f, Entity.rotation, 0f);
+            
+            if (GlobalSwitch.Instance.StateSyncSwitch.ClientPrediction)
+                _nextSyncFrame = RaceWorldManager.Instance.LocalFrame + 1;
+            else
+                _nextSyncFrame = RaceWorldManager.Instance.ServerFrame;
+            _lastYRotation = _nextYRotation = Entity.rotation;
+            _lastLogicPosition = _nextLogicPosition = new Vector3(Entity.x, Entity.z);
         }
 
         private void OnDestroy()

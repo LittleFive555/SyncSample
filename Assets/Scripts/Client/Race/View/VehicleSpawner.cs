@@ -9,7 +9,6 @@ namespace SyncSample.Client.Race.View
     public class VehicleSpawner : MonoBehaviour
     {
         [SerializeField] private Vehicle vehiclePrefab;
-        [SerializeField] private CinemachineVirtualCamera cameraFollow;
 
         private static VehicleSpawner _instance;
         public static VehicleSpawner Instance
@@ -39,9 +38,7 @@ namespace SyncSample.Client.Race.View
 
             if (vehicleEntity.IsLocal)
             {
-                var cameraFollowInstance = Instantiate(cameraFollow);
-                cameraFollowInstance.LookAt = vehicle.transform;
-                cameraFollowInstance.Follow = vehicle.transform;
+                Camera.main.GetComponent<FollowCamera>().target = vehicle.transform;
             }
 
             _vehicleObjects[vehicleEntity.id] = vehicle;
