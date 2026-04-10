@@ -150,10 +150,7 @@ namespace SyncSample.Server.Gameplay
 
                 while (now >= nextFrameTick)
                 {
-                    if (_currentFrame > GlobalSwitch.Instance.StateSyncSwitch.DelayApplyFrameCount)
-                    {
-                        Update(_currentFrame - GlobalSwitch.Instance.StateSyncSwitch.DelayApplyFrameCount, GlobalSwitch.Instance.StateSyncSwitch.FrameDeltaTime);
-                    }
+                    Update(_currentFrame, GlobalSwitch.Instance.StateSyncSwitch.FrameDeltaTime);
                     _currentFrame++;
                     _accumulatedLogicTimeMs += (long)(GlobalSwitch.Instance.StateSyncSwitch.FrameDeltaTime * 1000);
                     nextFrameTick += frameTicks;
