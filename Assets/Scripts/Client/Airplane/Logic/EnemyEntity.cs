@@ -26,10 +26,10 @@ namespace SyncSample.Client.Airplane.Logic
 
         public bool IsHit(FixedPoint x, FixedPoint y)
         {
-            return x.ToFloat() < _logicX.ToFloat() - _sizeX.ToFloat() / 2 
-            || x.ToFloat() > _logicX.ToFloat() + _sizeX.ToFloat() / 2 
-            || y.ToFloat() < _logicY.ToFloat() - _sizeY.ToFloat() / 2 
-            || y.ToFloat() > _logicY.ToFloat() + _sizeY.ToFloat() / 2;
+            return x.ToFloat() > X - _sizeX.ToFloat() / 2 
+                && x.ToFloat() < X + _sizeX.ToFloat() / 2 
+                && y.ToFloat() > Y - _sizeY.ToFloat() / 2 
+                && y.ToFloat() < Y + _sizeY.ToFloat() / 2;
         }
 
         public int Priority => 1;
