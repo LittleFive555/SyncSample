@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using SyncSample.Client.Gameplay;
-using SyncSample.Client.Gameplay.Lockstep;
 using SyncSample.Client.Gameplay.World.Logic;
 using SyncSample.Common;
 using UnityEngine;
@@ -68,6 +67,26 @@ namespace SyncSample.Client.Airplane.Logic
                     return;
                 AirplanePlayerInputSync.ApplyFrameMessage(message);
                 AdvanceFrame();
+            }
+            else // 原始锁步
+            {
+                if (!_isWaitingForAllClients) // 如果在等待所有客户端输入，则不累积时间
+                    _accumulatedTime += deltaTime;
+
+                // 接收延迟在 LockstepMessageHandlers 中延迟入队，不拉长本地逻辑帧间隔（否则会错误改变帧率）
+                while (_accumulatedTime >= LogicFixedDeltaTime)
+                {
+                    if (!AirplanePlayerInputSync.HasAllInputsForFrame(_currentFrame + 1))
+                    {
+                        _isWaitingForAllClients = true;
+                        return;
+                    }
+                    _isWaitingForAllClients = false;
+                    _accumulatedTime -= LogicFixedDeltaTime;
+                    AirplanePlayerInputSync.ApplyFrame(_currentFrame + 1);
+                    // 2. 推进帧
+                    AdvanceFrame();
+                }
             }
         }
 

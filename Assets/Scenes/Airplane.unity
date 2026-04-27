@@ -746,8 +746,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2019416473}
-  - component: {fileID: 2019416472}
   - component: {fileID: 2019416471}
+  - component: {fileID: 2019416472}
   - component: {fileID: 2019416475}
   - component: {fileID: 2019416474}
   m_Layer: 0
@@ -769,7 +769,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69c88da5eb07f4c42ba77c6a72a31b1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ServerAddress: 127.0.0.1
+  ServerAddress: 10.0.88.206
   ServerPort: 8888
   PingInterval: 2
 --- !u!114 &2019416472
