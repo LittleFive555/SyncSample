@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using SyncSample.Client.Gameplay.World.Logic;
 using SyncSample.Common;
+using Random = Unity.Mathematics.Random;
 
 namespace SyncSample.Client.Airplane.Logic
 {
