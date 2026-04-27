@@ -36,6 +36,10 @@ namespace SyncSample.Client.Gameplay
                 else
                     _input = _input.SetInput(InputType.Down, true);
             }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                _input = _input.SetInput(InputType.A, true);
+            }
         }
 
         public int GetInput()

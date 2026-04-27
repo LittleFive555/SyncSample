@@ -93,6 +93,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3071663853476527008}
+  - component: {fileID: 5167423584421824423}
   m_Layer: 0
   m_Name: Airplane1
   m_TagString: Untagged
@@ -116,3 +117,15 @@ Transform:
   - {fileID: 1833029071527423887}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5167423584421824423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4252529380781916358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef33d54499b6ecf4bb8dddba2ebc3d95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

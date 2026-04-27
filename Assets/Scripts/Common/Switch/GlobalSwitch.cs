@@ -7,6 +7,7 @@ namespace SyncSample.Common
         Lockstep,
         StateSync,
         Race_StateSync,
+        Airplane_Lockstep,
     }
 
     public class GlobalSwitch : MonoBehaviour

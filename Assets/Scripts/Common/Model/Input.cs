@@ -4,6 +4,7 @@ public enum InputType
     Left = 1,
     Up = 2,
     Down = 3,
+    A = 4,
 }
 
 public static class InputExtensions

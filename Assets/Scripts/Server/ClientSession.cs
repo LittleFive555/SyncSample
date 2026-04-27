@@ -89,7 +89,7 @@ namespace SyncSample.Server
                 }
                 catch (Exception e)
                 {
-                    Logger.LogWarning("处理消息异常: " + e.Message);
+                    Logger.LogWarning("处理消息异常: " + e.StackTrace);
                 }
             }
             lock (_incomingLock)

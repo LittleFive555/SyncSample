@@ -1,4 +1,7 @@
 using System;
+using SyncSample.Client.Airplane;
+using SyncSample.Client.Airplane.Logic;
+using SyncSample.Client.Airplane.View;
 using SyncSample.Client.Gameplay;
 using SyncSample.Client.Gameplay.Lockstep;
 using SyncSample.Client.Gameplay.Lockstep.World.Logic;
@@ -103,6 +106,20 @@ namespace SyncSample.Client
 
                 GameLooper.Updater.Register(RaceWorldManager.Instance);
             }
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.Airplane_Lockstep)
+            {
+                AirplaneWorldManager.Instance.Initialize();
+                
+                AirplaneManager.Instance.OnPlayerCreated += Spawner.Instance.EnsurePlayer;
+                AirplaneManager.Instance.OnPlayerRemoved += Spawner.Instance.RemovePlayer;
+                AirplaneManager.Instance.OnEnemyCreated += Spawner.Instance.EnsureEnemy;
+                AirplaneManager.Instance.OnEnemyRemoved += Spawner.Instance.RemoveEnemy;
+                AirplaneManager.Instance.OnBulletCreated += Spawner.Instance.EnsureBullet;
+                AirplaneManager.Instance.OnBulletRemoved += Spawner.Instance.RemoveBullet;
+                
+                GameLooper.Updater.Register(AirplaneWorldManager.Instance);
+                AirplanePlayerInputSync.SetExpectedClientCount(GlobalSwitch.Instance.LockstepSwitch.ExpectedClientCount);
+            }
 
             Logger.Log("After Launch");
         }
@@ -122,6 +139,8 @@ namespace SyncSample.Client
                 Client.OnMessageReceived += SyncStateMessageHandlers.OnMessageReceived;
             else if (GlobalSwitch.Instance.SyncMode == SyncMode.Race_StateSync)
                 Client.OnMessageReceived += RaceMessageHandlers.OnMessageReceived;
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.Airplane_Lockstep)
+                Client.OnMessageReceived += AirplaneMessageHandlers.OnMessageReceived;
         }
 
         public void DisconnectServer()
@@ -136,6 +155,8 @@ namespace SyncSample.Client
                 Client.OnMessageReceived -= SyncStateMessageHandlers.OnMessageReceived;
             else if (GlobalSwitch.Instance.SyncMode == SyncMode.Race_StateSync)
                 Client.OnMessageReceived -= RaceMessageHandlers.OnMessageReceived;
+            else if (GlobalSwitch.Instance.SyncMode == SyncMode.Airplane_Lockstep)
+                Client.OnMessageReceived -= AirplaneMessageHandlers.OnMessageReceived;
         }
 
         private void OnConnected()

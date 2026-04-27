@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using SyncSample.Client.Gameplay.Lockstep.World.Logic;
+using SyncSample.Client.Airplane.Logic;
 using SyncSample.Common;
 using UnityEngine;
 
-namespace SyncSample.Client.Gameplay.Lockstep
+namespace SyncSample.Client.Airplane
 {
-    public class LockstepMessageHandlers
+    public class AirplaneMessageHandlers
     {
         public static void OnMessageReceived(NetworkEnvelope envelope)
         {
@@ -16,16 +16,16 @@ namespace SyncSample.Client.Gameplay.Lockstep
                     try
                     {
                         var list = JsonUtility.FromJson<ClientListMessage>(envelope.payload);
-                        CharacterManager.Instance.SelfId = list.selfId ?? string.Empty;
+                        AirplaneManager.Instance.SelfId = list.selfId ?? string.Empty;
                         if (list.clients != null)
                         {
                             var ids = new List<string>(list.clients.Length);
                             foreach (var c in list.clients)
                             {
-                                CharacterManager.Instance.EnsurePlayer(c.id, c.name);
+                                AirplaneManager.Instance.EnsurePlayer(c.id, c.name);
                                 if (!string.IsNullOrEmpty(c.id)) ids.Add(c.id);
                             }
-                            LockstepPlayerInputSync.SetClients(ids);
+                            AirplanePlayerInputSync.SetClients(ids);
                         }
                     }
                     catch (System.Exception e)
@@ -37,8 +37,8 @@ namespace SyncSample.Client.Gameplay.Lockstep
                     try
                     {
                         var info = JsonUtility.FromJson<ClientInfo>(envelope.payload);
-                        CharacterManager.Instance.EnsurePlayer(info.id, info.name);
-                        LockstepPlayerInputSync.AddClient(info.id);
+                        AirplaneManager.Instance.EnsurePlayer(info.id, info.name);
+                        AirplanePlayerInputSync.AddClient(info.id);
                     }
                     catch (System.Exception e)
                     {
@@ -56,10 +56,10 @@ namespace SyncSample.Client.Gameplay.Lockstep
                         if (receiveDelayMs > 0)
                         {
                             GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(receiveDelayMs,
-                                () => LockstepPlayerInputSync.AddPending(input));
+                                () => AirplanePlayerInputSync.AddPending(input));
                         }
                         else
-                            LockstepPlayerInputSync.AddPending(input);
+                            AirplanePlayerInputSync.AddPending(input);
                     }
                     catch (System.Exception e)
                     {
@@ -75,11 +75,11 @@ namespace SyncSample.Client.Gameplay.Lockstep
                         {
                             GameMain.Instance.GameLooper.RunAfterDelayMilliseconds(
                                 receiveDelayMs,
-                                () => { LockstepPlayerInputSync.AddPendingMessage(allPlayerInput); });
+                                () => { AirplanePlayerInputSync.AddPendingMessage(allPlayerInput); });
                         }
                         else
                         {
-                            LockstepPlayerInputSync.AddPendingMessage(allPlayerInput);
+                            AirplanePlayerInputSync.AddPendingMessage(allPlayerInput);
                         }
 
                     }
