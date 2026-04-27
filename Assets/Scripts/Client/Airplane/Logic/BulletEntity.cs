@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SyncSample.Client.Gameplay.World.Logic;
 using SyncSample.Common;
 
@@ -28,13 +29,18 @@ namespace SyncSample.Client.Airplane.Logic
             // 只向上移动
             _logicY = FixedPoint.FromFloat(_logicY.ToFloat() + Const.BulletMoveSpeed * GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime);
             
+            List<EnemyEntity> toRemoveEnemies = new List<EnemyEntity>();
             foreach (var enemy in AirplaneManager.Instance.EnemyEntities.Values)
             {
                 if (enemy.IsHit(_logicX, _logicY))
                 {
-                    AirplaneManager.Instance.RemoveBullet(this);
-                    AirplaneManager.Instance.RemoveEnemy(enemy);
+                    toRemoveEnemies.Add(enemy);
                 }
+            }
+            foreach (var enemy in toRemoveEnemies)
+            {
+                AirplaneManager.Instance.RemoveBullet(this);
+                AirplaneManager.Instance.RemoveEnemy(enemy);
             }
         }
     }
