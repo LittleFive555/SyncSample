@@ -55,8 +55,8 @@ namespace SyncSample.Client.Airplane.Logic
         /// <summary> 应用位移：先以定点数加到逻辑，再同步到显示（显示用浮点）。 </summary>
         private void ApplyMovement(float dx, float dy)
         {
-            _logicX = FixedPoint.FromFloat(Mathf.Clamp(_logicX.ToFloat() + dx * Const.MoveSpeed * GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime, _moveRangeXMin.ToFloat(), _moveRangeXMax.ToFloat()));
-            _logicY = FixedPoint.FromFloat(Mathf.Clamp(_logicY.ToFloat() + dy * Const.MoveSpeed * GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime, _moveRangeYMin.ToFloat(), _moveRangeYMax.ToFloat()));
+            _logicX = FixedPoint.FromFloat(Mathf.Clamp(_logicX.ToFloat() + dx * Const.AirplaneMoveSpeed * GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime, _moveRangeXMin.ToFloat(), _moveRangeXMax.ToFloat()));
+            _logicY = FixedPoint.FromFloat(Mathf.Clamp(_logicY.ToFloat() + dy * Const.AirplaneMoveSpeed * GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime, _moveRangeYMin.ToFloat(), _moveRangeYMax.ToFloat()));
         }
 
         private void Fire()
