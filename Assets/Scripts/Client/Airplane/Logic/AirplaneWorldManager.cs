@@ -24,6 +24,9 @@ namespace SyncSample.Client.Airplane.Logic
 
         private SortedList<int, List<ILogicUpdate>> _logicEntities = new SortedList<int, List<ILogicUpdate>>();
 
+        private bool _isProcessingFrame = false;
+        private List<ILogicUpdate> _tempLogicEntities = new List<ILogicUpdate>();
+
         private readonly List<long> _enemySpawnFrames = new List<long>()
         {
             100,
@@ -92,17 +95,24 @@ namespace SyncSample.Client.Airplane.Logic
 
         public void RegisterLogicEntity(ILogicUpdate entity)
         {
-            if (_logicEntities.TryGetValue(entity.Priority, out var list))
+            if (_isProcessingFrame) // 如果在处理帧，则先临时保存，在帧末再添加
             {
-                if (!list.Contains(entity))
-                {
-                    list.Add(entity);
-                }
+                _tempLogicEntities.Add(entity);
             }
             else
             {
-                list = new List<ILogicUpdate>() { entity };
-                _logicEntities.Add(entity.Priority, list);
+                if (_logicEntities.TryGetValue(entity.Priority, out var list))
+                {
+                    if (!list.Contains(entity))
+                    {
+                        list.Add(entity);
+                    }
+                }
+                else
+                {
+                    list = new List<ILogicUpdate>() { entity };
+                    _logicEntities.Add(entity.Priority, list);
+                }
             }
         }
 
@@ -117,6 +127,7 @@ namespace SyncSample.Client.Airplane.Logic
         /// <summary> 推进一帧。子类可重写以在推进前/后插入逻辑。 </summary>
         protected virtual void AdvanceFrame()
         {
+            _isProcessingFrame = true;
             foreach (var entity in _logicEntities)
             {
                 foreach (var e in entity.Value)
@@ -124,6 +135,14 @@ namespace SyncSample.Client.Airplane.Logic
                     e.OnLogicFrame(_currentFrame);
                 }
             }
+            _isProcessingFrame = false;
+
+            // 在帧末再添加临时保存的实体
+            foreach (var entity in _tempLogicEntities)
+                RegisterLogicEntity(entity);
+            _tempLogicEntities.Clear();
+
+            // 如果到了敌人生成帧，则生成敌人
             if (_enemySpawnFrames.Contains(_currentFrame))
             {
                 AirplaneManager.Instance.NewEnemy();
