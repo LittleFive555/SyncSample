@@ -25,7 +25,8 @@ namespace SyncSample.Client.Airplane.Logic
         private SortedList<int, List<ILogicUpdate>> _logicEntities = new SortedList<int, List<ILogicUpdate>>();
 
         private bool _isProcessingFrame = false;
-        private List<ILogicUpdate> _tempLogicEntities = new List<ILogicUpdate>();
+        private List<ILogicUpdate> _tempLogicEntitiesToAdd = new List<ILogicUpdate>();
+        private List<ILogicUpdate> _tempLogicEntitiesToRemove = new List<ILogicUpdate>();
 
         private readonly List<long> _enemySpawnFrames = new List<long>()
         {
@@ -97,7 +98,7 @@ namespace SyncSample.Client.Airplane.Logic
         {
             if (_isProcessingFrame) // 如果在处理帧，则先临时保存，在帧末再添加
             {
-                _tempLogicEntities.Add(entity);
+                _tempLogicEntitiesToAdd.Add(entity);
             }
             else
             {
@@ -118,9 +119,16 @@ namespace SyncSample.Client.Airplane.Logic
 
         public void UnregisterLogicEntity(ILogicUpdate entity)
         {
-            if (_logicEntities.TryGetValue(entity.Priority, out var list) && list.Contains(entity))
+            if (_isProcessingFrame) // 如果在处理帧，则先临时保存，在帧末再删除
             {
-                list.Remove(entity);
+                _tempLogicEntitiesToRemove.Add(entity);
+            }
+            else
+            {
+                if (_logicEntities.TryGetValue(entity.Priority, out var list) && list.Contains(entity))
+                {
+                    list.Remove(entity);
+                }
             }
         }
 
@@ -138,9 +146,14 @@ namespace SyncSample.Client.Airplane.Logic
             _isProcessingFrame = false;
 
             // 在帧末再添加临时保存的实体
-            foreach (var entity in _tempLogicEntities)
+            foreach (var entity in _tempLogicEntitiesToAdd)
                 RegisterLogicEntity(entity);
-            _tempLogicEntities.Clear();
+            _tempLogicEntitiesToAdd.Clear();
+
+            // 在帧末再删除临时保存的实体
+            foreach (var entity in _tempLogicEntitiesToRemove)
+                UnregisterLogicEntity(entity);
+            _tempLogicEntitiesToRemove.Clear();
 
             // 如果到了敌人生成帧，则生成敌人
             if (_enemySpawnFrames.Contains(_currentFrame))
