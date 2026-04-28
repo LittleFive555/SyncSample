@@ -71,7 +71,7 @@ namespace SyncSample.Client.Airplane.Logic
 
         public void NewEnemy()
         {
-            float x = (float)_random.NextDouble() * 30 - 15;
+            float x = _random.NextFloat() * 30 - 15;
             float y = 30;
             EnemyEntity enemy = new EnemyEntity(FixedPoint.FromFloat(x), FixedPoint.FromFloat(y));
             
