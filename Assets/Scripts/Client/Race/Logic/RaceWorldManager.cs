@@ -1,7 +1,6 @@
 using SyncSample.Client.Gameplay;
 using SyncSample.Client.UI;
 using SyncSample.Common;
-using SyncSample.Common.Model.Race;
 using UnityEngine;
 
 namespace SyncSample.Client.Race.Logic

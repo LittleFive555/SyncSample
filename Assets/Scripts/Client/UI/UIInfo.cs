@@ -41,6 +41,7 @@ namespace SyncSample.Client.UI
 
         public void SetFrame(long frame)
         {
+            Logger.Log($"SetFrame: {frame}");
             _lockstepStatus.text = $"Frame: {frame}";
         }
 

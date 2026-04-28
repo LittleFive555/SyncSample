@@ -73,6 +73,14 @@ namespace SyncSample.Client.Airplane
             }
         }
 
+        public static long GetLastFrame()
+        {
+            lock (PendingMessages)
+            {
+                return PendingMessages.Count > 0 ? PendingMessages.Keys[PendingMessages.Count - 1] : -1;
+            }
+        }
+
         public static void ApplyFrameMessage(AllPlayerInputMessage message)
         {
             if (message == null) return;

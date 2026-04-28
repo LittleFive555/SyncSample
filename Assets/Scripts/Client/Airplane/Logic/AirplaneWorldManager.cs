@@ -54,6 +54,8 @@ namespace SyncSample.Client.Airplane.Logic
 
         public float LogicFixedDeltaTime => GlobalSwitch.Instance.LockstepSwitch.LogicDeltaTime;
 
+        public bool IsCatchingUp { get; private set; } = false;
+
         public void Initialize()
         {
             Logger.Log("WorldManager Initialize");
@@ -62,19 +64,38 @@ namespace SyncSample.Client.Airplane.Logic
         public void OnUpdate(float deltaTime)
         {
             if (!AirplanePlayerInputSync.AllClientsConnected()) return;
-
-            // 可能需要规定一个时间，比如在一帧内的百分之多少来发操作
-            ProcessInput();
             
             if (GlobalSwitch.Instance.LockstepSwitch.Optimistic) // 乐观锁步
             {
-                if (!AirplanePlayerInputSync.TryGetFrameMessage(_currentFrame + 1, out AllPlayerInputMessage message))
-                    return;
-                AirplanePlayerInputSync.ApplyFrameMessage(message);
-                AdvanceFrame();
+                if (_currentFrame + 2 < AirplanePlayerInputSync.GetLastFrame()) // 加速追赶
+                {
+                    // 不处理玩家输入了
+                    IsCatchingUp = true;
+                    int maxCatchUpCount = 5;
+                    for (int i = 0; i < maxCatchUpCount; i++)
+                    {
+                        if (AirplanePlayerInputSync.TryGetFrameMessage(_currentFrame + 1, out AllPlayerInputMessage message))
+                        {
+                            AirplanePlayerInputSync.ApplyFrameMessage(message);
+                            AdvanceFrame();
+                        }
+                    }
+                }
+                else // 正常逐帧推进
+                {
+                    // 可能需要规定一个时间，比如在一帧内的百分之多少来发操作
+                    ProcessInput();
+                    if (!AirplanePlayerInputSync.TryGetFrameMessage(_currentFrame + 1, out AllPlayerInputMessage message))
+                        return;
+                    IsCatchingUp = false;
+                    AirplanePlayerInputSync.ApplyFrameMessage(message);
+                    AdvanceFrame();
+                }
             }
             else // 原始锁步
             {
+                // 可能需要规定一个时间，比如在一帧内的百分之多少来发操作
+                ProcessInput();
                 if (!_isWaitingForAllClients) // 如果在等待所有客户端输入，则不累积时间
                     _accumulatedTime += deltaTime;
 
