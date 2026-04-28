@@ -1,18 +1,24 @@
 using SyncSample.Client.Airplane.Logic;
+using SyncSample.Client.UI;
 using SyncSample.Common;
 using UnityEngine;
 
 namespace SyncSample.Client.Airplane.View
 {
-    public class Airplane : MonoBehaviour
+    public class Airplane : MonoBehaviour, IInfoSource
     {
         public AirplaneEntity Entity { get; private set; }
 
-        
+        public string Name => Entity.Name;
+
+        public Vector2 LogicPosition => new Vector2(Entity.X, Entity.Y);
+
+        public Vector2 ViewPosition => transform.localPosition;
 
         public void Init(AirplaneEntity characterEntity)
         {
             Entity = characterEntity;
+            UIInfo.Instance.RegisterPos(this);
             transform.localPosition = new Vector3(Entity.X, Entity.Y, 0);
         }
 
@@ -29,6 +35,11 @@ namespace SyncSample.Client.Airplane.View
             {
                 transform.localPosition = new Vector3(Entity.X, Entity.Y, 0);
             }
+        }
+
+        private void OnDestroy()
+        {
+            UIInfo.Instance.UnregisterPos(this);
         }
     }
 }
