@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SyncSample.Client.Gameplay.World.Logic;
+using SyncSample.Client.UI;
 using SyncSample.Common;
 using UnityEngine;
 
@@ -102,6 +103,7 @@ namespace SyncSample.Client.Gameplay.Lockstep.World.Logic
         /// <summary> 推进一帧。子类可重写以在推进前/后插入逻辑。 </summary>
         protected virtual void AdvanceFrame()
         {
+            UIInfo.Instance.SetFrame(_currentFrame);
             foreach (var entity in _logicEntities)
             {
                 foreach (var e in entity.Value)

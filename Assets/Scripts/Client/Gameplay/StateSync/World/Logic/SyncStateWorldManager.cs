@@ -1,3 +1,4 @@
+using SyncSample.Client.UI;
 using SyncSample.Common;
 using UnityEngine;
 
@@ -80,7 +81,7 @@ namespace SyncSample.Client.Gameplay.StateSync.World.Logic
                 _accumulatedTime -= _frameDeltaTime;
                 _localFrame++;
             }
-
+            UIInfo.Instance.SetFrame(_localFrame, _serverFrame);
             ProcessInput();
         }
 

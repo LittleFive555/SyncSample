@@ -39,9 +39,14 @@ namespace SyncSample.Client.UI
             _delay.text = $"Delay: {delay}ms";
         }
 
-        public void SetLockstepStatus(long frame)
+        public void SetFrame(long frame)
         {
-            _lockstepStatus.text = $"Lockstep Frame: {frame}";
+            _lockstepStatus.text = $"Frame: {frame}";
+        }
+
+        public void SetFrame(long localFrame, long serverFrame)
+        {
+            _lockstepStatus.text = $"Local Frame: {localFrame}, Server Frame: {serverFrame}";
         }
 
         public void RegisterPos(IInfoSource logicSource)

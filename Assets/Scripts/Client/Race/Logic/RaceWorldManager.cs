@@ -1,4 +1,5 @@
 using SyncSample.Client.Gameplay;
+using SyncSample.Client.UI;
 using SyncSample.Common;
 using SyncSample.Common.Model.Race;
 using UnityEngine;
@@ -122,6 +123,7 @@ namespace SyncSample.Client.Race.Logic
 
                 ProcessInput(_localFrame + 1);
             }
+            UIInfo.Instance.SetFrame(_localFrame, _serverFrame);
         }
 
         private float GetTargetLocalTimeSeconds(long serverFrame)
