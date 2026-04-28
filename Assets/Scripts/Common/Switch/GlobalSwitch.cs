@@ -31,8 +31,6 @@ namespace SyncSample.Common
         public int AddReceiveDelay = 0;
         [SerializeField, Header("是否启用客户端插值")]
         public bool ClientInterpolation = false;
-        [SerializeField, Header("随机种子")]
-        public uint RandomSeed = 0;
 
         [Header("绑定")]
         [SerializeField]

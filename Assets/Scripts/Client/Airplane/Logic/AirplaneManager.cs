@@ -23,8 +23,6 @@ namespace SyncSample.Client.Airplane.Logic
             }
         }
 
-        private readonly Random _random = new Random(GlobalSwitch.Instance.RandomSeed);
-
         private readonly Dictionary<string, AirplaneEntity> _characterEntities = new Dictionary<string, AirplaneEntity>();
         private readonly Dictionary<long, EnemyEntity> _enemyEntities = new Dictionary<long, EnemyEntity>();
         public IReadOnlyDictionary<long, EnemyEntity> EnemyEntities => _enemyEntities;
@@ -39,6 +37,8 @@ namespace SyncSample.Client.Airplane.Logic
 
         public Action<BulletEntity> OnBulletCreated;
         public Action<BulletEntity> OnBulletRemoved;
+
+        private uint _randomIndex = 0;
 
         public AirplaneEntity EnsurePlayer(string id, string displayName)
         {
@@ -71,8 +71,10 @@ namespace SyncSample.Client.Airplane.Logic
 
         public void NewEnemy()
         {
-            float x = _random.NextFloat() * 30 - 15;
+            var random = Random.CreateFromIndex(_randomIndex++);
+            float x = random.NextFloat(-15, 15);
             float y = 30;
+            Logger.Log($"NewEnemy: x = {x}");
             EnemyEntity enemy = new EnemyEntity(FixedPoint.FromFloat(x), FixedPoint.FromFloat(y));
             
             _enemyEntities[enemy.Id] = enemy;
