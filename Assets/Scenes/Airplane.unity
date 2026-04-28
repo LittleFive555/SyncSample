@@ -1309,7 +1309,7 @@ MonoBehaviour:
   AddSendDelay: 0
   AddReceiveDelay: 0
   ClientInterpolation: 1
-  RandomSeed: 2153158
+  RandomSeed: 123
   _lockstepSwitch: {fileID: 2019416475}
   _stateSyncSwitch: {fileID: 2019416474}
 --- !u!4 &2019416473
