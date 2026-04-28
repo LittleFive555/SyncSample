@@ -23,7 +23,7 @@ namespace SyncSample.Client.Airplane.Logic
             }
         }
 
-        private readonly Random _random = new Random(12345);
+        private readonly Random _random = new Random(GlobalSwitch.Instance.RandomSeed);
 
         private readonly Dictionary<string, AirplaneEntity> _characterEntities = new Dictionary<string, AirplaneEntity>();
         private readonly Dictionary<long, EnemyEntity> _enemyEntities = new Dictionary<long, EnemyEntity>();

@@ -787,7 +787,8 @@ MonoBehaviour:
   SyncMode: 3
   AddSendDelay: 0
   AddReceiveDelay: 0
-  ClientInterpolation: 0
+  ClientInterpolation: 1
+  RandomSeed: 1562452
   _lockstepSwitch: {fileID: 2019416475}
   _stateSyncSwitch: {fileID: 2019416474}
 --- !u!4 &2019416473
@@ -835,7 +836,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ExpectedClientCount: 2
   LogicDeltaTime: 0.03333333
-  Optimistic: 0
+  Optimistic: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
